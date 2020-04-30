@@ -23,6 +23,8 @@ module.exports = function(app){
     .post(supplier_controller.un_pin_supplier)
     app.route('/delete_supplier')
     .post(supplier_controller.delete_supplier)
+    app.route('/update_supplier')
+    .post(supplier_controller.update_supplier)
 
     app.route('/starting_amount')
     .post(store_entry_controller.get_store_starting_amount)

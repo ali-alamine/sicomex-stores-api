@@ -16,9 +16,8 @@ Supplier.addNewSupplier = function (new_supplier,result){
         }
     })
 }
-
 Supplier.getSuppliers = function (result){
-    sql.query('SELECT * FROM supplier ORDER BY sup_order DESC , supplier_id DESC LIMIT 50',function(err,res){
+    sql.query('SELECT * FROM supplier ORDER BY sup_order DESC , supplier_id DESC',function(err,res){
         if(err){
             result(err);
         }else{
@@ -26,7 +25,6 @@ Supplier.getSuppliers = function (result){
         }
     });
 }
-
 Supplier.pinSupplier = function (supplier_data,result){
     var supplier_id=supplier_data.supplier_id
     sql.query('UPDATE supplier SET sup_order = 1 WHERE supplier_id= +'+ supplier_id,function(err,res){
@@ -50,6 +48,17 @@ Supplier.unPinSupplier = function (supplier_data,result){
 Supplier.deleteSupplier = function (supplier_data,result){
     var supplier_id=supplier_data.supplier_id
     sql.query('DELETE FROM supplier WHERE supplier_id= +'+ supplier_id,function(err,res){
+        if(err){
+            result(err);
+        }else{
+            result(res);
+        }
+    });
+}
+Supplier.updateSupplier = function (supplier_data,result){
+    var sqlQuery='UPDATE supplier SET supplier_name= ' +"'"+ supplier_data.edit_supplier_name  +"'" + ',supplier_amount= ' + supplier_data.edit_supplier_amount + " WHERE supplier_id = " + supplier_data.supplier_id;
+    console.log(sqlQuery)
+    sql.query( sqlQuery,function(err,res){
         if(err){
             result(err);
         }else{
