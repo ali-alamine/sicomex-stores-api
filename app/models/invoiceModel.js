@@ -1,6 +1,7 @@
 'use strict';
 
 var sql = require('./db.js');
+var supplierModel = require('../models/supplierModel');
 
 var Invoice =function(invoice){
     this.store_id=invoice.store_id;
@@ -10,7 +11,6 @@ var Invoice =function(invoice){
     this.invoice_amount=invoice.invoice_amount;
     this.invoice_date=invoice.invoice_date;
 }
-
 Invoice.addNewInvoice = function (invoice_data,result){
     sql.query('INSERT INTO invoice SET ?',invoice_data, function(err,res){
         if(err){
@@ -27,6 +27,19 @@ Invoice.getInvoices = function(result){
             result(err);
         }else{
             result(res);
+        }
+    });
+}
+
+Invoice.updateInvoice = function(invoice_data,result){
+    var sqlQuery='UPDATE invoice SET invoice_number = ' +"'"+ invoice_data.edit_invoice_number  +"'" + ',store_id = ' +"'"+ invoice_data.store_id  +"'"+',supplier_id = ' +"'"+ invoice_data.supplier_id  +"'"+ ',invoice_date = ' +"'"+ invoice_data.edit_invoice_date  +"'" + ',invoice_amount= ' +"'"+ invoice_data.edit_invoice_amount +"'"+" WHERE invoice_id = " +"'"+ invoice_data.invoice_id +"'";
+    sql.query(sqlQuery,function(err,res){
+        if(err){
+            result(err);
+        }else{
+            var update_supplier_amount ={'new_amount':invoice_data.edit_invoice_amount,'supplier_id':invoice_data.supplier_id}
+            supplierModel.updateAmount(update_supplier_amount)
+            // result(res);
         }
     });
 }

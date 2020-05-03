@@ -30,6 +30,8 @@ module.exports = function(app){
     .post(invoice_controller.add_new_invoice)
     app.route('/invoice')
     .get(invoice_controller.get_invoices)
+    app.route('/update_invoice')
+    .post(invoice_controller.update_invoice)
 
     app.route('/starting_amount')
     .post(store_entry_controller.get_store_starting_amount)

@@ -66,5 +66,19 @@ Supplier.updateSupplier = function (supplier_data,result){
         }
     });
 }
+Supplier.updateAmount = function (supplier_data,result){
+    try{
+        var sqlQuery='UPDATE supplier SET supplier_amount = supplier_amount +' + supplier_data.new_amount  + "WHERE supplier_id = " + supplier_data.supplier_id;
+        sql.query( sqlQuery,function(err,res){
+            if(err){
+                result(err);
+            }else{
+                result(res);
+            }
+        });
+    }catch{
+        result('err_undefined_variables');
+    }
+}
 
 module.exports = Supplier;

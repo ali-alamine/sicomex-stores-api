@@ -25,3 +25,16 @@ exports.get_invoices = function(req,res){
         }
     })
 }
+exports.update_invoice = function(req,res){
+    var request=req.body
+    var invoice_data = {"edit_invoice_amount":request.edit_invoice_amount,"invoice_id":request.invoice_id,"edit_invoice_number":request.edit_invoice_number,'supplier_id':request.supplier_id,'store_id':request.store_id,'edit_invoice_date':request.edit_invoice_date};
+    console.log('invoice_data')
+    console.log(invoice_data)
+    Invoice.updateInvoice(invoice_data,function(err,invoice){
+        if(err){
+            res.send(err);
+        }else{
+            res.send(invoice);
+        }
+    })
+}
