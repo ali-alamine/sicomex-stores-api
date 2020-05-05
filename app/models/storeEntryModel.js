@@ -16,7 +16,6 @@ var StoreEntry =function(storeEntry){
 }
 
 StoreEntry.addNewStoreEntry = function (supply_details,expense_details,entry_details,result){
-
     sql.beginTransaction(function(err){
         if (err) { throw err; }
         sql.query('INSERT INTO store_entry SET ?',entry_details, function(err,res){
@@ -26,8 +25,7 @@ StoreEntry.addNewStoreEntry = function (supply_details,expense_details,entry_det
                   });
             }else{
                 var store_entry_id=res.insertId;
-                for(var i=0;i<2;i++){
-
+                for(var i=0;i<3;i++){
                     if(i==0){
 
                         for(var j=0;j<supply_details.length;j++){
@@ -42,7 +40,6 @@ StoreEntry.addNewStoreEntry = function (supply_details,expense_details,entry_det
                         }
 
                     }else if(i==1){
-
                         for(var j=0;j<expense_details.length;j++){
                             var cash_details={'text':expense_details[j].text,'store_id':entry_details.store_id,'amount':expense_details[j].amount,'type':'exp','store_entry_id':store_entry_id};
                             CashDetailModel.addCashDetails(cash_details,function(err,cashDetails){

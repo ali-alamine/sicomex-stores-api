@@ -68,12 +68,16 @@ Supplier.updateSupplier = function (supplier_data,result){
 }
 Supplier.updateAmount = function (supplier_data,result){
     try{
-        var sqlQuery='UPDATE supplier SET supplier_amount = supplier_amount +' + supplier_data.new_amount  + "WHERE supplier_id = " + supplier_data.supplier_id;
+        var sqlCondition = supplier_data.final_amount > 0 ? 'UPDATE supplier SET supplier_amount = supplier_amount - ': 'UPDATE supplier SET supplier_amount = supplier_amount -'
+        var sqlQuery=sqlCondition + supplier_data.final_amount  + " WHERE supplier_id = " + supplier_data.supplier_id;
+        console.log(sqlQuery)
         sql.query( sqlQuery,function(err,res){
             if(err){
-                result(err);
+                sql.rollback(function() {
+                    throw err;
+                });
             }else{
-                result(res);
+                result(null,res);
             }
         });
     }catch{

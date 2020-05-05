@@ -23,8 +23,8 @@ exports.get_suppliers = function(req,res){
         }
     });
 }
-exports.pin_supplier = function(req,res){
-    Supplier.pinSupplier(req.body,function(err,store){
+exports.delete_supplier = function(req,res){
+    Supplier.deleteSupplier(req.body,function(err,store){
         if(err){
             res.send(err);
         }else{
@@ -32,8 +32,8 @@ exports.pin_supplier = function(req,res){
         }
     });
 }
-exports.delete_supplier = function(req,res){
-    Supplier.deleteSupplier(req.body,function(err,store){
+exports.pin_supplier = function(req,res){
+    Supplier.pinSupplier(req.body,function(err,store){
         if(err){
             res.send(err);
         }else{
