@@ -26,4 +26,14 @@ Check.addNewCheck = function (check_data,result){
 
 }
 
+Check.getChecks = function (result){
+    sql.query('SELECT * FROM bank_check ',function(err,res){
+        if(err){
+            result(err);
+        }else{
+            result(res);
+        }
+    });
+}
+
 module.exports = Check;

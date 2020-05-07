@@ -36,12 +36,18 @@ module.exports = function(app){
     .post(invoice_controller.pin_invoice)
     app.route('/un_pin_invoice')
     .post(invoice_controller.un_pin_invoice)
+    app.route('/get_invoice_by_number')
+    .post(invoice_controller.get_invoice_by_number)
 
     app.route('/starting_amount')
     .post(store_entry_controller.get_store_starting_amount)
     app.route('/add_new_store_entry')
     .post(store_entry_controller.add_new_store_entry)
     .get(store_controller.get_all_stores)
+
+
     app.route('/add_new_exp_check')
     .post(check_controller.add_new_exp_check)
+    app.route('/check')
+    .post(check_controller.get_checks)
 }

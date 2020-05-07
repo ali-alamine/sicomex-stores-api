@@ -66,3 +66,13 @@ exports.un_pin_invoice = function(req,res){
         }
     });
 }
+exports.get_invoice_by_number = function(req,res){
+    console.log(req.body)
+    Invoice.getInvoiceByNumber(req.body,function(err,store){
+        if(err){
+            res.send(err);
+        }else{
+            res.send(store)
+        }
+    });
+}

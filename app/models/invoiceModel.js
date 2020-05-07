@@ -153,4 +153,15 @@ Invoice.unPinInvoice = function (invoice_data,result){
         }
     });
 }
+Invoice.getInvoiceByNumber = function(invoice_data,result){
+    var invoice_number=invoice_data.invoice_number;
+    sql.query('SELECT * FROM invoice WHERE invoice_number ',function(err,res){
+    // sql.query('SELECT * from invoice where invoice_number = ' +invoice_number,function(err,res){
+        if(err){
+            result(err);
+        }else{
+            result(res);
+        }
+    });
+}
 module.exports = Invoice;   
