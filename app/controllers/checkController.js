@@ -6,10 +6,14 @@ exports.add_new_exp_check=function(req,res){
 
     var request = req.body;
     console.log(request)
+    var check_data={};
     if(!request.is_for_sup){
-        var check_data={'store_id':request.store_id,'store_id':request.supplier,'check_number':request.check_number,'check_description':request.check_description,'check_amount':request.check_amount,'check_date':request.check_date,'is_paid':request.is_paid_exp_check,'is_for_sup':request.is_for_sup}
+        check_data={'store_id':request.store_id,'check_number':request.check_number,'check_description':request.check_description,'check_amount':request.check_amount,'check_date':request.check_date,'is_paid':request.is_paid_check,'is_for_sup':request.is_for_sup}
     }else{
-        console.log('exp check')
+        var invoice_ids_arr=request.invoice_ids;
+        var new_arr_val= invoice_ids_arr.join(',');
+        check_data={'store_id':request.store_id,'supplier_id':request.supplier_id,'check_number':request.check_number,'check_amount':request.check_amount,'check_date':request.check_date,'is_paid':request.is_paid_check,'invoice_ids':new_arr_val,'is_for_sup':request.is_for_sup}
+    
     }
     Check.addNewCheck(check_data,function(err,Check){
         if(err){

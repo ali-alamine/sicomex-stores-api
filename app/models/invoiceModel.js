@@ -15,32 +15,45 @@ Invoice.addNewInvoice = function (invoice_data,result){
     
     sql.beginTransaction(function(err){
         if (err) { throw err; }
-        sql.query('INSERT INTO invoice SET ?',invoice_data, function(err,res){
+        sql.query('SELECT invoice_number from invoice where invoice_number = ' + invoice_data.invoice_number,function(err,res){
             if(err){
                 sql.rollback(function() {
                     throw err;
                 });
             }else{
-                sql.query('UPDATE supplier SET supplier_amount = supplier_amount + ' + invoice_data.invoice_amount + ' WHERE supplier_id = ' + invoice_data.supplier_id, function(err,res){
-                    if(err){
-                        sql.rollback(function() {
-                            throw err;
-                        });
-                    }else{
-                        sql.commit(function(err) {
-                            if (err) { 
-                                sql.rollback(function() {
-                                    throw err;
-                                });
-                            }else{
-                                result(null,res);
-                            }
-                        });
-                    }
-                })
+                if(res.length == 0 ){
+                    sql.query('INSERT INTO invoice SET ?',invoice_data, function(err,res){
+                        if(err){
+                            sql.rollback(function() {
+                                throw err;
+                            });
+                        }else{
+                            sql.query('UPDATE supplier SET supplier_amount = supplier_amount + ' + invoice_data.invoice_amount + ' WHERE supplier_id = ' + invoice_data.supplier_id, function(err,res){
+                                if(err){
+                                    sql.rollback(function() {
+                                        throw err;
+                                    });
+                                }else{
+                                    sql.commit(function(err) {
+                                        if (err) { 
+                                            sql.rollback(function() {
+                                                throw err;
+                                            });
+                                        }else{
+                                            result(null,res);
+                                        }
+                                    });
+                                }
+                            })
+                        }
+            
+                    });
+                }else{
+                    result('DUPLICATE_INV_NUM',res);
+                }
             }
-
         });
+
     });
 }
 
@@ -53,7 +66,6 @@ Invoice.getInvoices = function(result){
         }
     });
 }
-
 Invoice.updateInvoice = function(invoice_data,result){
     sql.beginTransaction(function(err){
         if (err) { throw err; }
@@ -155,8 +167,25 @@ Invoice.unPinInvoice = function (invoice_data,result){
 }
 Invoice.getInvoiceByNumber = function(invoice_data,result){
     var invoice_number=invoice_data.invoice_number;
-    sql.query('SELECT * FROM invoice WHERE invoice_number ',function(err,res){
-    // sql.query('SELECT * from invoice where invoice_number = ' +invoice_number,function(err,res){
+    var sqlQuery = '';
+    if(invoice_number == ''){
+        sqlQuery = 'SELECT * from invoice where invoice_number like "% %"';
+    }else{
+        sqlQuery = 'SELECT invoice_id,invoice_number,invoice_amount from invoice where invoice_number like "%' +invoice_number+ '%" limit 10';
+    }
+    console.log(sqlQuery)
+    sql.query(sqlQuery,function(err,res){
+        if(err){
+            result(err);
+        }else{
+            result(res);
+        }
+    });
+}
+
+Invoice.updateInvoiceCheckID =  function(data,result){
+    var sqlQuery = 'UPDATE invoice set check_id =' + data.check_id + ' where invoice_id in ()';
+    sql.query(sqlQuery,function(err,res){
         if(err){
             result(err);
         }else{
