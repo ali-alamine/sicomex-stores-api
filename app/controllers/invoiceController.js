@@ -15,7 +15,7 @@ exports.add_new_invoice=function(req,res){
 }
 exports.delete_invoice=function(req,res){
     var request = req.body;
-    var invoice_data = {"invoice_amount":request.invoice_amount,"invoice_id":request.invoice_id,"supplier_id":request.supplier_id};
+    var invoice_data = {"supplier_amount":request.supplier_amount,"invoice_amount":request.invoice_amount,"invoice_id":request.invoice_id,"supplier_id":request.supplier_id};
     Invoice.deleteInvoice(invoice_data,function(err,invoice){
         if(err){
             res.send(err)
@@ -35,10 +35,17 @@ exports.get_invoices = function(req,res){
 }
 exports.update_invoice = function(req,res){
     var request=req.body;
+    var new_supplier_amount=0;
+    var supplier_amount=request.supplier_amount;
     var old_amount=request.edit_old_invoice_amount;
     var new_amount=request.edit_invoice_amount;
-    var final_amount=  old_amount - new_amount;
-    var invoice_data = {"final_amount":final_amount,"edit_invoice_amount":request.edit_invoice_amount,"invoice_id":request.invoice_id,"edit_invoice_number":request.edit_invoice_number,'supplier_id':request.supplier_id,'store_id':request.store_id,'edit_invoice_date':request.edit_invoice_date};
+    new_supplier_amount = (parseInt(supplier_amount) - parseInt(old_amount)) + parseInt(new_amount);
+    var is_same_amount = false;
+    if(new_amount ==  old_amount){
+        is_same_amount=true;
+    }
+
+    var invoice_data = {"is_same_amount":is_same_amount,"new_supplier_amount":new_supplier_amount,"edit_invoice_amount":request.edit_invoice_amount,"invoice_id":request.invoice_id,"edit_invoice_number":request.edit_invoice_number,'supplier_id':request.supplier_id,'store_id':request.store_id,'edit_invoice_date':request.edit_invoice_date};
     Invoice.updateInvoice(invoice_data,function(err,invoice){
         if(err){
             res.send(err);

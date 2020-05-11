@@ -78,26 +78,25 @@ Invoice.updateInvoice = function(invoice_data,result){
                     });
                 }
             }else{
-                if(invoice_data.final_amount != 0){
-
-                    var update_supplier_amount ={'final_amount':invoice_data.final_amount,'supplier_id':invoice_data.supplier_id}
+                if(!invoice_data.is_same_amount){
+                    var update_supplier_amount ={'new_supplier_amount':invoice_data.new_supplier_amount,'supplier_id':invoice_data.supplier_id}
                     supplierModel.updateAmount(update_supplier_amount,function(err,response){
                         if(err){
                             sql.rollback(function() {
                                 throw err;
                             });
-                        }
-                    })
-                    sql.commit(function(err) {
-                        if (err) { 
-                            sql.rollback(function() {
-                                throw err;
+                        }else{
+                            sql.commit(function(err) {
+                                if (err) { 
+                                    sql.rollback(function() {
+                                        throw err;
+                                    });
+                                }
+                                result(null,res);
                             });
                         }
-                        result(null,res);
-                    });
+                    })
                 }else{
-                    
                     sql.commit(function(err) {
                         if (err) { 
                             sql.rollback(function() {
@@ -112,32 +111,31 @@ Invoice.updateInvoice = function(invoice_data,result){
     })
 }
 Invoice.deleteInvoice = function(invoice_data,result){
+
     sql.beginTransaction(function(err){
         if (err) { throw err; }
         var sqlQuery="DELETE FROM invoice WHERE invoice_id = " + invoice_data.invoice_id;
         sql.query(sqlQuery,function(err,res){
             if(err){
-                if(err){
-                    sql.rollback(function() {
-                        throw err;
-                    });
-                }
+                sql.rollback(function() {
+                    throw err;
+                });
             }else{
-                sql.query('UPDATE supplier SET supplier_amount = supplier_amount - ' + invoice_data.invoice_amount + ' WHERE supplier_id = ' + invoice_data.supplier_id, function(err,res){
+                var new_supplier_amount=parseInt(invoice_data.supplier_amount) - parseInt(invoice_data.invoice_amount);
+                var update_supplier_amount = {'new_supplier_amount':new_supplier_amount,'supplier_id':invoice_data.supplier_id};
+                supplierModel.updateAmount(update_supplier_amount,function(err,response){
                     if(err){
                         sql.rollback(function() {
                             throw err;
                         });
                     }else{
-                        
                         sql.commit(function(err) {
                             if (err) { 
                                 sql.rollback(function() {
                                     throw err;
                                 });
-                            }else{
-                                result(null,res);
                             }
+                            result(null,res);
                         });
                     }
                 })
@@ -169,7 +167,7 @@ Invoice.getInvoiceByNumber = function(invoice_data,result){
     var invoice_number=invoice_data.invoice_number;
     var sqlQuery = '';
     if(invoice_number == ''){
-        sqlQuery = 'SELECT * from invoice where invoice_number like "% %"';
+        sqlQuery = 'SELECT invoice_id,invoice_number,invoice_amount from invoice where invoice_number like "% %"';
     }else{
         sqlQuery = 'SELECT invoice_id,invoice_number,invoice_amount from invoice where invoice_number like "%' +invoice_number+ '%" limit 10';
     }
@@ -184,12 +182,15 @@ Invoice.getInvoiceByNumber = function(invoice_data,result){
 }
 
 Invoice.updateInvoiceCheckID =  function(data,result){
-    var sqlQuery = 'UPDATE invoice set check_id =' + data.check_id + ' where invoice_id in ()';
+    var sqlQuery = 'UPDATE invoice set check_id =' + data.check_id + ' where invoice_id in (' + data.invoice_ids + ')';
+    console.log(sqlQuery);
     sql.query(sqlQuery,function(err,res){
         if(err){
-            result(err);
+            sql.rollback(function() {
+                throw err;
+            });
         }else{
-            result(res);
+            result(null,res);
         }
     });
 }
