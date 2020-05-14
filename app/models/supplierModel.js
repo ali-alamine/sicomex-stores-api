@@ -27,7 +27,7 @@ Supplier.getSuppliers = function (result){
 }
 Supplier.pinSupplier = function (supplier_data,result){
     var supplier_id=supplier_data.supplier_id
-    sql.query('UPDATE supplier SET sup_order = 1 WHERE supplier_id= +'+ supplier_id,function(err,res){
+    sql.query('UPDATE supplier SET sup_order = 1 WHERE supplier_id= '+ supplier_id,function(err,res){
         if(err){
             result(err);
         }else{
@@ -37,7 +37,7 @@ Supplier.pinSupplier = function (supplier_data,result){
 }
 Supplier.unPinSupplier = function (supplier_data,result){
     var supplier_id=supplier_data.supplier_id
-    sql.query('UPDATE supplier SET sup_order = 0 WHERE supplier_id= +'+ supplier_id,function(err,res){
+    sql.query('UPDATE supplier SET sup_order = 0 WHERE supplier_id= '+ supplier_id,function(err,res){
         if(err){
             result(err);
         }else{

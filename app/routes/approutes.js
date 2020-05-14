@@ -46,8 +46,12 @@ module.exports = function(app){
     .get(store_controller.get_all_stores)
 
 
-    app.route('/add_new_exp_check')
-    .post(check_controller.add_new_exp_check)
-    app.route('/check')
-    .post(check_controller.get_checks)
+    app.route('/add_new_check')
+    .post(check_controller.add_new_check)
+    app.route('/get_checks')
+    .get(check_controller.get_checks)
+    app.route('/pin_check')
+    .post(check_controller.pin_check)
+    app.route('/un_pin_check')
+    .post(check_controller.un_pin_check)
 }
