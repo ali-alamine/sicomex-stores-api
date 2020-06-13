@@ -3,6 +3,7 @@
 var sql = require('./db.js');
 var invoiceModel = require('./invoiceModel.js');
 var supplierModel = require('../models/supplierModel');
+var storeModel = require('../models/storeModel');
 var Check =function(check){
     this.check_description=check.check_description;
     this.check_amount=check.check_amount;
@@ -14,8 +15,8 @@ var Check =function(check){
     this.invoice_ids=check.invoices_ids;
     this.check_date=check.check_date;
 }
-
 Check.addNewCheck = function (check_data,result){
+
     sql.beginTransaction(function(err){
         sql.query('SELECT * FROM bank_check WHERE check_number = ' +check_data.check_number,function(err,res){
             if(err){
@@ -54,14 +55,25 @@ Check.addNewCheck = function (check_data,result){
                                                         throw err;
                                                     });
                                                 }else{
-                                                    sql.commit(function(err) {
-                                                        if (err) { 
-                                                            sql.rollback(function() {
+                                                    var new_store_amount=(parseInt(check_data.store_amount) - parseInt(check_data.check_amount));
+                                                    var update_store_amount = {'new_store_amount':new_store_amount,'store_id':check_data.store_id};
+                                                    storeModel.updateAmount(update_store_amount,function(err,response){
+                                                        if(err){
+                                                            sql.rollback(function(){
                                                                 throw err;
+                                                            })
+                                                        }else{
+                                                            sql.commit(function(err) {
+                                                                if (err) { 
+                                                                    sql.rollback(function() {
+                                                                        throw err;
+                                                                    });
+                                                                }
+                                                                result(null,res);
                                                             });
                                                         }
-                                                        result(null,res);
-                                                    });
+                                                    })
+
                                                 }
                                             })
                                         }else{
@@ -78,15 +90,25 @@ Check.addNewCheck = function (check_data,result){
                                     }
                                 })
                             }else{
-                                sql.commit(function(err) {
-                                    if (err) { 
-                                        sql.rollback(function() {
+                                /* Update only store amount if the check type is expense */
+                                var new_store_amount=(parseInt(check_data.store_amount) - parseInt(check_data.check_amount));
+                                var update_store_amount = {'new_store_amount':new_store_amount,'store_id':check_data.store_id};
+                                storeModel.updateAmount(update_store_amount,function(err,response){
+                                    if(err){
+                                        sql.rollback(function(){
                                             throw err;
-                                        });
+                                        })
                                     }else{
-                                        result(null,res);
+                                        sql.commit(function(err) {
+                                            if (err) { 
+                                                sql.rollback(function() {
+                                                    throw err;
+                                                });
+                                            }
+                                            result(null,res);
+                                        });
                                     }
-                                });
+                                })
                             }
                         }
                     });
@@ -99,6 +121,22 @@ Check.addNewCheck = function (check_data,result){
 
     })
 }
+Check.updateCheck = function(req,result){
+   
+    sql.beginTransaction(function(err){
+        var check_data={'check_amount':req.check_amount,'check_number':req.check_number,'check_date':req.check_date,'store_id':req.store_id,'supplier_id':req.supplier_id,'store_amount':req.store_amount,'supplier_amount':req.supplier_amount};
+        var sqlQuery='UPDATE bank_check SET check_amount = '+check_data.check_amount + ', check_number = ' + check_data.check_number + ',check_date= ' + "'" + check_data.check_date  + "' WHERE bank_check_id = " + req.check_id;
+        console.log(sqlQuery)
+        console.log(req.check_date)
+        sql.query(sqlQuery,function(err,res){
+            if(err){
+                console.log(err)
+            }else{
+                result(res)
+            }
+        });
+    })
+}
 Check.getChecks = function (result){
     sql.query('SELECT bc.*, sup.*, str.* FROM bank_check AS bc LEFT JOIN supplier as sup on bc.supplier_id = sup.supplier_id LEFT JOIN store as str on bc.store_id = str.store_id ORDER BY bc.check_order DESC , bc.bank_check_id DESC limit 30',function(err,res){
         if(err){
@@ -108,7 +146,6 @@ Check.getChecks = function (result){
         }
     });
 }
-
 Check.pinCheck = function (check_data,result){
     var bank_check_id=check_data.bank_check_id;
     sql.query('UPDATE bank_check SET check_order = 1 WHERE bank_check_id= '+ bank_check_id,function(err,res){
@@ -129,5 +166,134 @@ Check.unPinCheck = function (check_data,result){
             result(res);
         }
     });
+}
+Check.setCheckPaid = function (request,result){
+    
+    sql.beginTransaction(function(err){
+
+        sql.query('UPDATE bank_check SET is_paid = 1 WHERE bank_check_id= '+ request.bank_check_id,function(err,res){
+            if(err){
+                sql.rollback(function() {
+                    throw err;
+                });
+            }else{
+                if(request.is_for_sup == 'Supplier'){
+                    var new_supplier_amount=(parseInt(request.supplier_amount) - parseInt(request.check_amount));
+                    var update_supplier_amount = {'new_supplier_amount':new_supplier_amount,'supplier_id':request.supplier_id};
+                    supplierModel.updateAmount(update_supplier_amount,function(err,response){
+                        if(err){
+                            sql.rollback(function() {
+                                throw err;
+                            });
+                        }else{
+                            var new_store_amount=(parseInt(request.amount) - parseInt(request.check_amount));
+                            var update_store_amount = {'new_store_amount':new_store_amount,'store_id':request.store_id};
+                            storeModel.updateAmount(update_store_amount,function(err,response){
+                                if(err){
+                                    sql.rollback(function(){
+                                        throw err;
+                                    })
+                                }else{
+                                    sql.commit(function(err) {
+                                        if (err) { 
+                                            sql.rollback(function() {
+                                                throw err;
+                                            });
+                                        }
+                                        result(null,res);
+                                    });
+                                }
+                            })
+
+                        }
+                    }) 
+                }else{
+                    var new_store_amount=(parseInt(request.amount) - parseInt(request.check_amount));
+                    var update_store_amount = {'new_store_amount':new_store_amount,'store_id':request.store_id};
+                    storeModel.updateAmount(update_store_amount,function(err,response){
+                        if(err){
+                            sql.rollback(function(){
+                                throw err;
+                            })
+                        }else{
+                            sql.commit(function(err) {
+                                if (err) { 
+                                    sql.rollback(function() {
+                                        throw err;
+                                    });
+                                }
+                                result(null,res);
+                            });
+                        }
+                    })
+
+                }
+            }
+        });
+    })
+}
+Check.setCheckUnPaid = function (request,result){
+    
+    sql.beginTransaction(function(err){
+        sql.query('UPDATE bank_check SET is_paid = 0 WHERE bank_check_id= '+ request.bank_check_id,function(err,res){
+            if(err){
+                sql.rollback(function() {
+                    throw err;
+                });
+            }else{
+                if(request.is_for_sup == 'Supplier'){
+                    var new_supplier_amount=(parseInt(request.supplier_amount) + parseInt(request.check_amount));
+                    var update_supplier_amount = {'new_supplier_amount':new_supplier_amount,'supplier_id':request.supplier_id};
+                    supplierModel.updateAmount(update_supplier_amount,function(err,response){
+                        if(err){
+                            sql.rollback(function() {
+                                throw err;
+                            });
+                        }else{
+                            var new_store_amount=(parseInt(request.amount) + parseInt(request.check_amount));
+                            var update_store_amount = {'new_store_amount':new_store_amount,'store_id':request.store_id};
+                            storeModel.updateAmount(update_store_amount,function(err,response){
+                                if(err){
+                                    sql.rollback(function(){
+                                        throw err;
+                                    })
+                                }else{
+                                    sql.commit(function(err) {
+                                        if (err) { 
+                                            sql.rollback(function() {
+                                                throw err;
+                                            });
+                                        }
+                                        result(null,res);
+                                    });
+                                }
+                            })
+
+                        }
+                    }) 
+                }else{
+                    var new_store_amount=(parseInt(request.amount) + parseInt(request.check_amount));
+                    var update_store_amount = {'new_store_amount':new_store_amount,'store_id':request.store_id};
+                    storeModel.updateAmount(update_store_amount,function(err,response){
+                        if(err){
+                            sql.rollback(function(){
+                                throw err;
+                            })
+                        }else{
+                            sql.commit(function(err) {
+                                if (err) { 
+                                    sql.rollback(function() {
+                                        throw err;
+                                    });
+                                }
+                                result(null,res);
+                            });
+                        }
+                    })
+
+                }
+            }
+        });
+    })
 }
 module.exports = Check;

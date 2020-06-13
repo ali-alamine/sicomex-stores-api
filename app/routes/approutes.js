@@ -54,4 +54,10 @@ module.exports = function(app){
     .post(check_controller.pin_check)
     app.route('/un_pin_check')
     .post(check_controller.un_pin_check)
+    app.route('/update_check')
+    .post(check_controller.update_check)
+    app.route('/set_check_paid')
+    .post(check_controller.set_check_paid)
+    app.route('/set_check_unPaid')
+    .post(check_controller.set_check_unPaid)
 }
