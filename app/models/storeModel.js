@@ -29,9 +29,7 @@ Store.getAllStores = function(result){
 }
 
 Store.updateAmount = function (store_data,result){
-    try{
         var sqlQuery = "UPDATE store SET amount = "+ store_data.new_store_amount  +  " WHERE store_id = " + store_data.store_id;
-        console.log('*************************** sqlQuery ******************************')
         console.log(sqlQuery)
         sql.query( sqlQuery,function(err,res){
             if(err){
@@ -42,9 +40,6 @@ Store.updateAmount = function (store_data,result){
                 result(null,res);
             }
         });
-    }catch{
-        result('err_undefined_variables');
-    }
 }
 
 module.exports = Store;
