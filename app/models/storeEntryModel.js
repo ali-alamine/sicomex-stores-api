@@ -1,7 +1,7 @@
 'use strict';
 
 var sql = require('./db.js');
-var CashDetailModel = require('./CashDetailModel.js');
+var CashDetailModel = require('./cashDetailModel.js');
 // store constructor
 
 var StoreEntry =function(storeEntry){
