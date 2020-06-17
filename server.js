@@ -11,7 +11,8 @@ https.createServer({
   key: fs.readFileSync('./key.pem'),
   cert: fs.readFileSync('./cert.pem'),
   passphrase: 'YOUR PASSPHRASE HERE'
-}, app)
+}, app).listen(4000);
+
 console.log('API server started on: ' + port);
 
 app.use(bodyParser.urlencoded({ extended: true }));
