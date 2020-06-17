@@ -1,5 +1,5 @@
 const cors = require('cors');
-
+const https = require('https');
 const express = require('express'),
   app = express(),
 
@@ -7,7 +7,11 @@ bodyParser = require('body-parser');
 port = process.env.PORT || 4000;
 app.use(cors())
 
-app.listen(port);
+https.createServer({
+  key: fs.readFileSync('./key.pem'),
+  cert: fs.readFileSync('./cert.pem'),
+  passphrase: 'YOUR PASSPHRASE HERE'
+}, app)
 console.log('API server started on: ' + port);
 
 app.use(bodyParser.urlencoded({ extended: true }));
