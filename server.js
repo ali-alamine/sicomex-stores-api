@@ -11,7 +11,7 @@ app.use(cors())
 https.createServer({
   key: fs.readFileSync('./key.pem'),
   cert: fs.readFileSync('./cert.pem'),
-  passphrase: 'pm2'
+  passphrase: 'pm12'
 }, app).listen(4000);
 
 console.log('API server started on: ' + port);
