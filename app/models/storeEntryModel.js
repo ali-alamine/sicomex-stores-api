@@ -3,7 +3,7 @@
 var sql = require('./db.js');
 var CashDetailModel = require('./cashDetailModel.js');
 // store constructor
-
+var storeModel = require('../models/storeModel');
 var StoreEntry =function(storeEntry){
     this.store_id=storeEntry.store_id;
     this.cash_expense_amount=storeEntry.cash_expense_amount;
@@ -15,7 +15,9 @@ var StoreEntry =function(storeEntry){
     this.entry_report_date=storeEntry.entry_report_date;
 }
 
-StoreEntry.addNewStoreEntry = function (supply_details,expense_details,entry_details,result){
+StoreEntry.addNewStoreEntry = function (supply_details,expense_details,entry_details,new_store_amount,result){
+    console.log('---------------------- new_store_amount ---------------------- ')
+    console.log(new_store_amount)
     sql.beginTransaction(function(err){
         if (err) { throw err; }
         sql.query('INSERT INTO store_entry SET ?',entry_details, function(err,res){
@@ -52,14 +54,23 @@ StoreEntry.addNewStoreEntry = function (supply_details,expense_details,entry_det
                         }
                     }
                 }
-                sql.commit(function(err) {
-                    if (err) { 
-                        sql.rollback(function() {
+                var update_store_amount = {'new_store_amount':new_store_amount,'store_id':entry_details.store_id};
+                storeModel.updateAmount(update_store_amount,function(err,response){
+                    if(err){
+                        sql.rollback(function(){
                             throw err;
+                        })
+                    }else{
+                        sql.commit(function(err) {
+                            if (err) { 
+                                sql.rollback(function() {
+                                    throw err;
+                                });
+                            }
+                            result(null,res);
                         });
                     }
-                        result(null,res);
-                });
+                })
             }
         })
     })

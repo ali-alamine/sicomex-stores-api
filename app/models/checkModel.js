@@ -16,7 +16,8 @@ var Check =function(check){
     this.check_date=check.check_date;
 }
 Check.addNewCheck = function (check_data,result){
-
+    console.log(' ----------------------------------- request -----------------------------------')
+    console.log(check_data)
     sql.beginTransaction(function(err){
         sql.query('SELECT * FROM bank_check WHERE check_number = ' +check_data.check_number,function(err,res){
             if(err){

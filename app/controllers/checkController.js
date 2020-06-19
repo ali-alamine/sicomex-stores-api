@@ -5,6 +5,7 @@ var Check = require('../models/checkModel.js');
 exports.add_new_check=function(req,res){
 
     var request = req.body;
+
     var check_data={};
     if(request.is_for_sup==false){
         check_data={'store_id':request.store_id,'store_amount':request.store_amount,'check_number':request.check_number,'check_description':request.check_description,'check_amount':request.check_amount,'check_date':request.check_date,'is_paid':request.is_paid_check,'is_for_sup':request.is_for_sup}
@@ -47,7 +48,6 @@ exports.un_pin_check= function(req,res){
         }
     });
 }
-
 exports.set_check_paid= function(req,res){
     Check.setCheckPaid(req.body,function(err,check){
         if(err){
