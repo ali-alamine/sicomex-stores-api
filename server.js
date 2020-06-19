@@ -8,11 +8,7 @@ bodyParser = require('body-parser');
 port = process.env.PORT || 4000;
 app.use(cors())
 
-// https.createServer({
-//   key: fs.readFileSync('./key.pem'),
-//   cert: fs.readFileSync('./cert.pem'),
-//   passphrase: 'pm12'
-// }, app).listen(4000);
+
 
 console.log('API server started on: ' + port);
 
@@ -31,4 +27,13 @@ app.use(bodyParser.json());
 
 var routes = require('./app/routes/approutes'); //importing route
 routes(app); //register the route
-app.listen(4000)
+
+/* ------------ FOR LOCALHOST ------------------ */
+// app.listen(4000)
+
+/* ------------ FOR PRODUCTION ------------------ */
+https.createServer({
+  key: fs.readFileSync('./key.pem'),
+  cert: fs.readFileSync('./cert.pem'),
+  passphrase: 'pm12'
+}, app).listen(4000);

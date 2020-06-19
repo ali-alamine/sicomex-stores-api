@@ -91,25 +91,36 @@ Check.addNewCheck = function (check_data,result){
                                     }
                                 })
                             }else{
-                                /* Update only store amount if the check type is expense */
-                                var new_store_amount=(parseInt(check_data.store_amount) - parseInt(check_data.check_amount));
-                                var update_store_amount = {'new_store_amount':new_store_amount,'store_id':check_data.store_id};
-                                storeModel.updateAmount(update_store_amount,function(err,response){
-                                    if(err){
-                                        sql.rollback(function(){
-                                            throw err;
-                                        })
-                                    }else{
-                                        sql.commit(function(err) {
-                                            if (err) { 
-                                                sql.rollback(function() {
-                                                    throw err;
-                                                });
-                                            }
-                                            result(null,res);
-                                        });
-                                    }
-                                })
+                                if(check_data.is_paid){
+                                    /* Update only store amount if the check type is expense */
+                                    var new_store_amount=(parseInt(check_data.store_amount) - parseInt(check_data.check_amount));
+                                    var update_store_amount = {'new_store_amount':new_store_amount,'store_id':check_data.store_id};
+                                    storeModel.updateAmount(update_store_amount,function(err,response){
+                                        if(err){
+                                            sql.rollback(function(){
+                                                throw err;
+                                            })
+                                        }else{
+                                            sql.commit(function(err) {
+                                                if (err) { 
+                                                    sql.rollback(function() {
+                                                        throw err;
+                                                    });
+                                                }
+                                                result(null,res);
+                                            });
+                                        }
+                                    })
+                                }else{
+                                    sql.commit(function(err) {
+                                        if (err) { 
+                                            sql.rollback(function() {
+                                                throw err;
+                                            });
+                                        }
+                                        result(null,res);
+                                    });
+                                }
                             }
                         }
                     });
