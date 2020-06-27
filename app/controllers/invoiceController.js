@@ -83,3 +83,12 @@ exports.get_invoice_by_number = function(req,res){
         }
     });
 }
+exports.advanced_search_invoice = function(req,res){
+    Invoice.advancedSearchInvoice(req.body,function(err,store){
+        if(err){
+            res.send(err);
+        }else{
+            res.send(store)
+        }
+    });
+}

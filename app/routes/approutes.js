@@ -38,6 +38,8 @@ module.exports = function(app){
     .post(invoice_controller.un_pin_invoice)
     app.route('/get_invoice_by_number')
     .post(invoice_controller.get_invoice_by_number)
+    app.route('/advanced_search_invoice')
+    .post(invoice_controller.advanced_search_invoice)
 
     app.route('/starting_amount')
     .post(store_entry_controller.get_store_starting_amount)
@@ -60,4 +62,5 @@ module.exports = function(app){
     .post(check_controller.set_check_paid)
     app.route('/set_check_unPaid')
     .post(check_controller.set_check_unPaid)
+
 }

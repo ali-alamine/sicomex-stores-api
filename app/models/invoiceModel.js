@@ -180,7 +180,6 @@ Invoice.getInvoiceByNumber = function(invoice_data,result){
         }
     });
 }
-
 Invoice.updateInvoiceCheckID =  function(data,result){
     var sqlQuery = 'UPDATE invoice set check_id =' + data.check_id + ' where invoice_id in (' + data.invoice_ids + ')';
     console.log(sqlQuery);
@@ -191,6 +190,58 @@ Invoice.updateInvoiceCheckID =  function(data,result){
             });
         }else{
             result(null,res);
+        }
+    });
+}
+Invoice.advancedSearchInvoice = function(data,result){
+    var order_by_date=data.order_by_date;
+    var order_by_amount=data.order_by_amount;
+    var sqlQuery='';
+    var sql_and='';
+    var sql_order='';
+    console.log(data)
+    sqlQuery = 'SELECT inv.*, sup.*, st.* from invoice as inv LEFT join supplier as sup on inv.supplier_id = sup.supplier_id LEFT JOIN store as st on inv.store_id = st.store_id WHERE 1';
+    
+    if(data.supplier_id != ''){
+        sql_and = ' AND inv.supplier_id = ' + data.supplier_id;
+    }
+    if(data.store_id != ''){
+        sql_and = sql_and + ' AND inv.store_id = ' + data.store_id;
+    }
+    if(data.date_from != 'Invalid date'){
+        sql_and = sql_and + ' AND date(inv.invoice_date) >= ' +"'"+data.date_from +"'";
+    }
+    if(data.date_to != 'Invalid date'){
+        sql_and = sql_and + ' AND date(inv.invoice_date) <= ' +"'"+ data.date_to +"'";
+    }
+    if(data.is_paid == 'paid'){
+        sql_and = sql_and + ' AND inv.check_id is NOT NULL';
+    }
+    else if(data.is_paid == 'unpaid'){
+        sql_and = sql_and + ' AND inv.check_id is NULL';
+    }
+    if(order_by_date){
+        sql_order =sql_order + ' ORDER BY inv.invoice_order DESC , date(inv.invoice_date) DESC'
+    }
+    if(order_by_date && order_by_amount){
+        sql_order = sql_order + ' ,inv.invoice_amount DESC'
+    }
+    if(!order_by_date && order_by_amount){
+        sql_order =sql_order + ' ORDER BY inv.invoice_order DESC , inv.invoice_amount DESC'
+    }
+    if(!order_by_date && !order_by_amount){
+        sql_order =sql_order + ' ORDER BY inv.invoice_order DESC , inv.invoice_id DESC'
+    }
+    sqlQuery= sqlQuery +sql_and + sql_order;
+    console.log(sqlQuery)
+    sql.query(sqlQuery,function(err,res){
+        if(err){
+            result(err);
+        }else{
+            if(res.length==0){
+                res='EMPTY_RESULT'
+            }
+            result(res);
         }
     });
 }
