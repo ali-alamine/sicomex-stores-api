@@ -196,6 +196,8 @@ Invoice.updateInvoiceCheckID =  function(data,result){
 Invoice.advancedSearchInvoice = function(data,result){
     var order_by_date=data.order_by_date;
     var order_by_amount=data.order_by_amount;
+    var amount_from=data.amount_from;
+    var amount_to=data.amount_to;
     var sqlQuery='';
     var sql_and='';
     var sql_order='';
@@ -203,7 +205,7 @@ Invoice.advancedSearchInvoice = function(data,result){
     sqlQuery = 'SELECT inv.*, sup.*, st.* from invoice as inv LEFT join supplier as sup on inv.supplier_id = sup.supplier_id LEFT JOIN store as st on inv.store_id = st.store_id WHERE 1';
     
     if(data.supplier_id != ''){
-        sql_and = ' AND inv.supplier_id = ' + data.supplier_id;
+        sql_and = sql_and +' AND inv.supplier_id = ' + data.supplier_id;
     }
     if(data.store_id != ''){
         sql_and = sql_and + ' AND inv.store_id = ' + data.store_id;
@@ -213,6 +215,12 @@ Invoice.advancedSearchInvoice = function(data,result){
     }
     if(data.date_to != 'Invalid date'){
         sql_and = sql_and + ' AND date(inv.invoice_date) <= ' +"'"+ data.date_to +"'";
+    }
+    if(amount_from != ''){
+        sql_and = sql_and +' AND inv.invoice_amount >= ' + amount_from;
+    }
+    if(amount_to != ''){
+        sql_and = sql_and + ' AND inv.invoice_amount <= ' + amount_to;
     }
     if(data.is_paid == 'paid'){
         sql_and = sql_and + ' AND inv.check_id is NOT NULL';
@@ -232,14 +240,14 @@ Invoice.advancedSearchInvoice = function(data,result){
     if(!order_by_date && !order_by_amount){
         sql_order =sql_order + ' ORDER BY inv.invoice_order DESC , inv.invoice_id DESC'
     }
-    sqlQuery= sqlQuery +sql_and + sql_order;
-    console.log(sqlQuery)
+    sqlQuery= sqlQuery + sql_and + sql_order;
+    console.log(sqlQuery);
     sql.query(sqlQuery,function(err,res){
         if(err){
             result(err);
         }else{
             if(res.length==0){
-                res='EMPTY_RESULT'
+                res='EMPTY_RESULT';
             }
             result(res);
         }

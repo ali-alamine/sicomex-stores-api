@@ -308,4 +308,66 @@ Check.setCheckUnPaid = function (request,result){
         });
     })
 }
+
+Check.advancedSearchBankCheck = function(data,result){
+    var order_by_date=data.order_by_date;
+    var order_by_amount=data.order_by_amount;
+    var amount_from=data.amount_from;
+    var amount_to=data.amount_to;
+    var sqlQuery='';
+    var sql_and='';
+    var sql_order='';
+    console.log(data)
+    sqlQuery = 'SELECT ck.*, sup.*, st.* from bank_check as ck LEFT join supplier as sup on ck.supplier_id = sup.supplier_id LEFT JOIN store as st on ck.store_id = st.store_id WHERE 1';
+    
+    if(data.supplier_id != ''){
+        sql_and = ' AND ck.supplier_id = ' + data.supplier_id;
+    }
+    if(data.store_id != ''){
+        sql_and = sql_and + ' AND ck.store_id = ' + data.store_id;
+    }
+    if(data.date_from != 'Invalid date'){
+        sql_and = sql_and + ' AND date(ck.check_date) >= ' +"'"+data.date_from +"'";
+    }
+    if(data.date_to != 'Invalid date'){
+        sql_and = sql_and + ' AND date(ck.check_date) <= ' +"'"+ data.date_to +"'";
+    }
+    if(amount_from != ''){
+        sql_and = sql_and +' AND ck.check_amount >= ' + amount_from;
+        console.log('HERE WE GO')
+    }
+    if(amount_to != ''){
+        sql_and = sql_and +' AND ck.check_amount <= ' + amount_to;
+    }
+    if(data.is_paid == 'paid'){
+        sql_and = sql_and + ' AND ck.is_paid = 1 ';
+    }
+    else if(data.is_paid == 'unpaid'){
+        sql_and = sql_and + ' AND ck.is_paid = 0 ';
+    }
+    if(order_by_date){
+        sql_order =sql_order + ' ORDER BY ck.check_order DESC , date(ck.check_date) DESC'
+    }
+    if(order_by_date && order_by_amount){
+        sql_order = sql_order + ' ,ck.check_amount DESC'
+    }
+    if(!order_by_date && order_by_amount){
+        sql_order =sql_order + ' ORDER BY ck.check_order DESC , ck.check_amount DESC'
+    }
+    if(!order_by_date && !order_by_amount){
+        sql_order =sql_order + ' ORDER BY ck.check_order DESC , ck.bank_check_id DESC'
+    }
+    sqlQuery= sqlQuery +sql_and + sql_order;
+    console.log(sqlQuery);
+    sql.query(sqlQuery,function(err,res){
+        if(err){
+            result(err);
+        }else{
+            if(res.length==0){
+                res='EMPTY_RESULT';
+            }
+            result(res);
+        }
+    });
+}
 module.exports = Check;
