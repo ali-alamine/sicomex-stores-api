@@ -308,7 +308,6 @@ Check.setCheckUnPaid = function (request,result){
         });
     })
 }
-
 Check.advancedSearchBankCheck = function(data,result){
     var order_by_date=data.order_by_date;
     var order_by_amount=data.order_by_amount;

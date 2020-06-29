@@ -3,7 +3,7 @@
 var mysql = require('mysql');
 
 //local mysql db connection
-var is_prod = true;
+var is_prod = false;
 if(is_prod){
   // test pull
   var connection = mysql.createConnection({

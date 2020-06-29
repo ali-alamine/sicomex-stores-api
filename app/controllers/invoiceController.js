@@ -92,3 +92,12 @@ exports.advanced_search_invoice = function(req,res){
         }
     });
 }
+exports.search_invoice = function(req,res){
+    Invoice.searchInvoice(req.body,function(err,invoice_report){
+        if(err){
+            res.send(err);
+        }else{
+            res.send(invoice_report)
+        }
+    });
+}

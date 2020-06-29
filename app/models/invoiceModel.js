@@ -193,6 +193,24 @@ Invoice.updateInvoiceCheckID =  function(data,result){
         }
     });
 }
+Invoice.searchInvoice =  function(data,result){
+
+    if(data.invoice_number != ''){
+        var sqlQuery = 'SELECT inv.*,sup.*,st.* FROM invoice as inv left join supplier as sup on inv.supplier_id = sup.supplier_id left join store as st on inv.store_id = st.store_id where invoice_number = ' + data.invoice_number + ' ORDER BY inv.invoice_order DESC , inv.invoice_id DESC limit 50';
+        console.log(sqlQuery);
+        sql.query(sqlQuery,function(err,res){
+            if(err){
+                sql.rollback(function() {
+                    throw err;
+                });
+            }else{
+                result(null,res);
+            }
+        });
+    }else{
+        result('NO_SEARCH_PARAM');
+    }
+}
 Invoice.advancedSearchInvoice = function(data,result){
     var order_by_date=data.order_by_date;
     var order_by_amount=data.order_by_amount;
