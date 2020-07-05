@@ -15,14 +15,20 @@ exports.add_new_invoice=function(req,res){
 }
 exports.delete_invoice=function(req,res){
     var request = req.body;
-    var invoice_data = {"supplier_amount":request.supplier_amount,"invoice_amount":request.invoice_amount,"invoice_id":request.invoice_id,"supplier_id":request.supplier_id};
-    Invoice.deleteInvoice(invoice_data,function(err,invoice){
-        if(err){
-            res.send(err)
-        }else{
-            res.send(invoice)
-        }
-    })
+    var invoice_data = {"check_id":request.check_id,"supplier_amount":request.supplier_amount,"invoice_amount":request.invoice_amount,"invoice_id":request.invoice_id,"supplier_id":request.supplier_id};
+console.log(request.check_id )
+    if(request.check_id != null){
+
+        res.send('INVOICE_IS_ASSIGNED_TO_A_CHECK');
+    }else{
+        Invoice.deleteInvoice(invoice_data,function(err,invoice){
+            if(err){
+                res.send(err)
+            }else{
+                res.send(invoice)
+            }
+        })
+    }
 }
 exports.get_invoices = function(req,res){
     Invoice.getInvoices(function(err,invoices){
@@ -44,7 +50,8 @@ exports.update_invoice = function(req,res){
     if(new_amount ==  old_amount){
         is_same_amount=true;
     }
-
+    console.log(' *************** req.body ******************');
+    console.log(req.body);
     var invoice_data = {"is_same_amount":is_same_amount,"new_supplier_amount":new_supplier_amount,"edit_invoice_amount":request.edit_invoice_amount,"invoice_id":request.invoice_id,"edit_invoice_number":request.edit_invoice_number,'supplier_id':request.supplier_id,'store_id':request.store_id,'edit_invoice_date':request.edit_invoice_date};
     Invoice.updateInvoice(invoice_data,function(err,invoice){
         if(err){

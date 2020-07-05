@@ -134,10 +134,14 @@ Check.addNewCheck = function (check_data,result){
     })
 }
 Check.updateCheck = function(req,result){
-   
+   console.log(req);
     sql.beginTransaction(function(err){
+        var expense_check_query='';
+        if(req.check_type=='exp'){
+            expense_check_query = ' check_description = ' +"'"+ req.check_description +"'" + ', ';
+        }
         var check_data={'check_amount':req.check_amount,'check_number':req.check_number,'check_date':req.check_date,'store_id':req.store_id,'supplier_id':req.supplier_id,'store_amount':req.store_amount,'supplier_amount':req.supplier_amount};
-        var sqlQuery='UPDATE bank_check SET check_amount = '+check_data.check_amount + ', check_number = ' + check_data.check_number + ',check_date= ' + "'" + check_data.check_date  + "' WHERE bank_check_id = " + req.check_id;
+        var sqlQuery='UPDATE bank_check SET check_amount = '+check_data.check_amount + ',' + expense_check_query + 'check_number = ' + check_data.check_number + ',check_date= ' + "'" + check_data.check_date  + "' WHERE bank_check_id = " + req.check_id;
         console.log(sqlQuery)
         console.log(req.check_date)
         sql.query(sqlQuery,function(err,res){
@@ -368,5 +372,41 @@ Check.advancedSearchBankCheck = function(data,result){
             result(res);
         }
     });
+}
+
+Check.deleteCheck = function (request,result){
+    console.log(' ************************ request ******************** ');
+    console.log(request);
+    if(request.is_paid){
+        result('CANT_DELETE_PAID_CHECK');
+    }else{
+        sql.beginTransaction(function(err){
+            
+            sql.query('DELETE FROM bank_check WHERE bank_check_id = '+ request.bank_check_id,function(err,res){
+                if(err){
+                    sql.rollback(function() {
+                        throw err;
+                    });
+                }else{
+                    sql.query('UPDATE invoice SET check_id = NULL' + ' where invoice_id in (' + request.invoice_ids + ')',function(err,res){
+                        if(err){
+                            sql.rollback(function() {
+                                throw err;
+                            });
+                        }else{
+                            sql.commit(function(err) {
+                                if (err) { 
+                                    sql.rollback(function() {
+                                        throw err;
+                                    });
+                                }
+                                result(null,res);
+                            });
+                        }
+                    })
+                }
+            });
+        })
+    }
 }
 module.exports = Check;

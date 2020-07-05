@@ -86,3 +86,13 @@ exports.advanced_search_bank_check=function(req,res){
         }
     })
 }
+exports.delete_check=function(req,res){
+
+    Check.deleteCheck(req.body,function(err,Check_report){
+        if(err){
+            res.send(err);
+        }else{
+            res.send(Check_report);
+        }
+    })
+}

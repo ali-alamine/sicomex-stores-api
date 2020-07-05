@@ -111,7 +111,6 @@ Invoice.updateInvoice = function(invoice_data,result){
     })
 }
 Invoice.deleteInvoice = function(invoice_data,result){
-
     sql.beginTransaction(function(err){
         if (err) { throw err; }
         var sqlQuery="DELETE FROM invoice WHERE invoice_id = " + invoice_data.invoice_id;
@@ -208,7 +207,7 @@ Invoice.searchInvoice =  function(data,result){
             }
         });
     }else{
-        result('NO_SEARCH_PARAM');
+        Invoice.getInvoices(result)
     }
 }
 Invoice.advancedSearchInvoice = function(data,result){

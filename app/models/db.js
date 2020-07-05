@@ -5,7 +5,6 @@ var mysql = require('mysql');
 //local mysql db connection
 var is_prod = true;
 if(is_prod){
-  // test pull
   var connection = mysql.createConnection({
       host     : 'sicomex-stores-new.czgv9lejumuk.us-east-1.rds.amazonaws.com',
       user     : 'root',
