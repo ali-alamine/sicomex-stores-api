@@ -59,3 +59,23 @@ exports.update_supplier = function(req,res){
         }
     });
 }
+exports.search_supplier_by_name = function(req,res){
+    var request= req.body;
+    var supplier_name=request.supplier_name;
+    Supplier.searchSupplierByName(supplier_name,function(err,store){
+        if(err){
+            res.send(err);
+        }else{
+            res.send(store)
+        }
+    });
+}
+exports.advanced_search_suppliers = function(req,res){
+    Supplier.advancedSearchSuppliers(req.body,function(err,store){
+        if(err){
+            res.send(err);
+        }else{
+            res.send(store)
+        }
+    });
+}

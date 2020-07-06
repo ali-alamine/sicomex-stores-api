@@ -16,7 +16,6 @@ exports.add_new_invoice=function(req,res){
 exports.delete_invoice=function(req,res){
     var request = req.body;
     var invoice_data = {"check_id":request.check_id,"supplier_amount":request.supplier_amount,"invoice_amount":request.invoice_amount,"invoice_id":request.invoice_id,"supplier_id":request.supplier_id};
-console.log(request.check_id )
     if(request.check_id != null){
 
         res.send('INVOICE_IS_ASSIGNED_TO_A_CHECK');

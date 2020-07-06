@@ -24,6 +24,11 @@ module.exports = function(app){
     app.route('/update_supplier')
     .post(supplier_controller.update_supplier)
 
+    app.route('/search_supplier_by_name')
+    .post(supplier_controller.search_supplier_by_name)
+    app.route('/advanced_search_suppliers')
+    .post(supplier_controller.advanced_search_suppliers)
+
     app.route('/invoice')
     .post(invoice_controller.add_new_invoice)
     app.route('/invoice')
