@@ -1,5 +1,5 @@
 const cors = require('cors');
-const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const express = require('express'),
   app = express(),
@@ -17,26 +17,26 @@ app.use(bodyParser.json());
 var routes = require('./app/routes/approutes'); //importing route
 routes(app); //register the route
 
-var is_prod=true;
+var is_prod=false;
 
 if(is_prod){
-  https.createServer({
-    key: fs.readFileSync('./key.pem'),
-    cert: fs.readFileSync('./cert.pem'),
-    passphrase: 'pm12'
+  http.createServer({
+    //key: fs.readFileSync('./key.pem'),
+    //cert: fs.readFileSync('./cert.pem'),
+    //passphrase: 'pm12'
   }, app).listen(4000);
   var nginx = require('nginx-server');
- 
+
 var options = {
-    config: __dirname + '/test/stubs/nginx.conf',
+ //   config: __dirname + '/test/stubs/nginx.conf',
 };
- 
+
   var server = nginx(options);
-  
+
   server.start(function () {
       console.log('started');
   });
-  
+
   server.stop(function () {
       console.log('stopped');
   });
