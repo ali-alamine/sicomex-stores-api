@@ -221,11 +221,11 @@ Invoice.advancedSearchInvoice = function(data,result){
     console.log(data)
     sqlQuery = 'SELECT inv.*, sup.*, st.* from invoice as inv LEFT join supplier as sup on inv.supplier_id = sup.supplier_id LEFT JOIN store as st on inv.store_id = st.store_id WHERE 1';
     
-    if(data.supplier_id != ''){
-        sql_and = sql_and +' AND inv.supplier_id = ' + data.supplier_id;
+    if(data.supplier_ids.length > 0 ){
+        sql_and = sql_and +' AND inv.supplier_id in (' + data.supplier_ids + ')';
     }
-    if(data.store_id != ''){
-        sql_and = sql_and + ' AND inv.store_id = ' + data.store_id;
+    if(data.store_ids.length > 0){
+        sql_and = sql_and + ' AND inv.store_id in (' + data.store_ids + ')';
     }
     if(data.date_from != 'Invalid date'){
         sql_and = sql_and + ' AND date(inv.invoice_date) >= ' +"'"+data.date_from +"'";

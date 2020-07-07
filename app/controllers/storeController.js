@@ -25,7 +25,17 @@ exports.get_all_stores = function (req,res){
     });
 
 };
-
+exports.search_store_by_name = function(req,res){
+    var request= req.body;
+    var store_name=request.store_name;
+    Store.searchStoreByName(store_name,function(err,store){
+        if(err){
+            res.send(err);
+        }else{
+            res.send(store)
+        }
+    });
+}
 exports.get_store_bank_acc = function (req,res){
 
     Store.getStoreBankAcc(req,function(err,store){

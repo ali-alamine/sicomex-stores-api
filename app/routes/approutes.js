@@ -11,6 +11,9 @@ module.exports = function(app){
     .post(store_controller.add_new_store)
     .get(store_controller.get_all_stores)
 
+    app.route('/search_store_by_name')
+    .post(store_controller.search_store_by_name)
+
     app.route('/supplier')
     .post(supplier_controller.add_new_supplier)
     app.route('/supplier')

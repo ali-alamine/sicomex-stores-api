@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 var routes = require('./app/routes/approutes'); //importing route
 routes(app); //register the route
 
-var is_prod=true;
+var is_prod=false;
 
 if(is_prod){
   https.createServer({

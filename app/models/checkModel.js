@@ -323,11 +323,11 @@ Check.advancedSearchBankCheck = function(data,result){
     console.log(data)
     sqlQuery = 'SELECT ck.*, sup.*, st.* from bank_check as ck LEFT join supplier as sup on ck.supplier_id = sup.supplier_id LEFT JOIN store as st on ck.store_id = st.store_id WHERE 1';
     
-    if(data.supplier_id != ''){
-        sql_and = ' AND ck.supplier_id = ' + data.supplier_id;
+    if(data.supplier_ids.length > 0 ){
+        sql_and = sql_and +' AND ck.supplier_id in (' + data.supplier_ids + ')';
     }
-    if(data.store_id != ''){
-        sql_and = sql_and + ' AND ck.store_id = ' + data.store_id;
+    if(data.store_ids.length > 0){
+        sql_and = sql_and + ' AND ck.store_id in (' + data.store_ids + ')';
     }
     if(data.date_from != 'Invalid date'){
         sql_and = sql_and + ' AND date(ck.check_date) >= ' +"'"+data.date_from +"'";

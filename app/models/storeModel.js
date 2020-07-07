@@ -29,17 +29,36 @@ Store.getAllStores = function(result){
 }
 
 Store.updateAmount = function (store_data,result){
-        var sqlQuery = "UPDATE store SET amount = "+ store_data.new_store_amount  +  " WHERE store_id = " + store_data.store_id;
-        console.log(sqlQuery)
-        sql.query( sqlQuery,function(err,res){
-            if(err){
-                sql.rollback(function() {
-                    throw err;
-                });
-            }else{
-                result(null,res);
-            }
-        });
+    var sqlQuery = "UPDATE store SET amount = "+ store_data.new_store_amount  +  " WHERE store_id = " + store_data.store_id;
+    console.log(sqlQuery)
+    sql.query( sqlQuery,function(err,res){
+        if(err){
+            sql.rollback(function() {
+                throw err;
+            });
+        }else{
+            result(null,res);
+        }
+    });
+}
+Store.searchStoreByName = function (store_name,result){
+    var sqlQuery='';
+    if(store_name == ''){
+        sqlQuery = 'SELECT * FROM store WHERE store_name LIKE  "% %"';
+    }else{
+        sqlQuery = 'SELECT * FROM store WHERE store_name LIKE ' + "'%" + store_name + "%'" + 'LIMIT 10';
+    }
+    console.log(' *************************** sqlQuery ***************************')
+    console.log(sqlQuery)
+    sql.query( sqlQuery,function(err,res){
+        if(err){
+            sql.rollback(function() {
+                throw err;
+            });
+        }else{
+            result(null,res);
+        }
+    });
 }
 
 module.exports = Store;
