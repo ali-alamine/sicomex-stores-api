@@ -46,8 +46,8 @@ Supplier.unPinSupplier = function (supplier_data,result){
     });
 }
 Supplier.deleteSupplier = function (supplier_data,result){
-    var supplier_id=supplier_data.supplier_id
-    sql.query('DELETE FROM supplier WHERE supplier_id= +'+ supplier_id,function(err,res){
+    var supplier_id=supplier_data.supplier_id;
+    sql.query('DELETE FROM supplier WHERE supplier_id= '+ supplier_id,function(err,res){
         if(err){
             result(err);
         }else{

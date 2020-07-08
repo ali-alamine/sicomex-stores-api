@@ -373,7 +373,6 @@ Check.advancedSearchBankCheck = function(data,result){
         }
     });
 }
-
 Check.deleteCheck = function (request,result){
     console.log(' ************************ request ******************** ');
     console.log(request);
@@ -407,6 +406,25 @@ Check.deleteCheck = function (request,result){
                 }
             });
         })
+    }
+}
+
+Check.searchCheck =  function(data,result){
+
+    if(data.check_number != ''){
+        var sqlQuery = 'SELECT bc.*, sup.*, str.* FROM bank_check AS bc LEFT JOIN supplier as sup on bc.supplier_id = sup.supplier_id LEFT JOIN store as str on bc.store_id = str.store_id WHERE bc.check_number like ' +"'%" + data.check_number +"%'" + ' ORDER BY bc.check_order DESC , bc.bank_check_id DESC limit 30';
+        console.log(sqlQuery);
+        sql.query(sqlQuery,function(err,res){
+            if(err){
+                sql.rollback(function() {
+                    throw err;
+                });
+            }else{
+                result(null,res);
+            }
+        });
+    }else{
+        result(null,[]);
     }
 }
 module.exports = Check;

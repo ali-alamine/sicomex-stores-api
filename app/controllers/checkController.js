@@ -96,3 +96,12 @@ exports.delete_check=function(req,res){
         }
     })
 }
+exports.search_check = function(req,res){
+    Check.searchCheck(req.body,function(err,invoice_report){
+        if(err){
+            res.send(err);
+        }else{
+            res.send(invoice_report)
+        }
+    });
+}

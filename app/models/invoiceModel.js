@@ -166,9 +166,9 @@ Invoice.getInvoiceByNumber = function(invoice_data,result){
     var invoice_number=invoice_data.invoice_number;
     var sqlQuery = '';
     if(invoice_number == ''){
-        sqlQuery = 'SELECT invoice_id,invoice_number,invoice_amount from invoice where invoice_number like "% %" and check_id is not null';
+        sqlQuery = 'SELECT invoice_id,invoice_number,invoice_amount from invoice where invoice_number like "% %"';
     }else{
-        sqlQuery = 'SELECT invoice_id,invoice_number,invoice_amount from invoice where invoice_number like "%' +invoice_number+ '%" and check_id IS NOT NULL LIMIT 10';
+        sqlQuery = 'SELECT invoice_id,invoice_number,invoice_amount from invoice where invoice_number like "%' +invoice_number+ '%" and check_id IS NULL LIMIT 10';
     }
     console.log(sqlQuery)
     sql.query(sqlQuery,function(err,res){
@@ -195,7 +195,7 @@ Invoice.updateInvoiceCheckID =  function(data,result){
 Invoice.searchInvoice =  function(data,result){
 
     if(data.invoice_number != ''){
-        var sqlQuery = 'SELECT inv.*,sup.*,st.* FROM invoice as inv left join supplier as sup on inv.supplier_id = sup.supplier_id left join store as st on inv.store_id = st.store_id where invoice_number = ' + data.invoice_number + ' ORDER BY inv.invoice_order DESC , inv.invoice_id DESC limit 50';
+        var sqlQuery = 'SELECT inv.*,sup.*,st.* FROM invoice as inv left join supplier as sup on inv.supplier_id = sup.supplier_id left join store as st on inv.store_id = st.store_id where invoice_number like' +"'%" + data.invoice_number +"%'" + ' ORDER BY inv.invoice_order DESC , inv.invoice_id DESC limit 50';
         console.log(sqlQuery);
         sql.query(sqlQuery,function(err,res){
             if(err){
@@ -207,7 +207,7 @@ Invoice.searchInvoice =  function(data,result){
             }
         });
     }else{
-        Invoice.getInvoices(result)
+        result(null,[]);
     }
 }
 Invoice.advancedSearchInvoice = function(data,result){

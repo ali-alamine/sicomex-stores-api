@@ -75,6 +75,8 @@ module.exports = function(app){
     .post(check_controller.set_check_unPaid)
     app.route('/delete_check')
     .post(check_controller.delete_check)
+    app.route('/search_check')
+    .post(check_controller.search_check)
     app.route('/advanced_search_bank_check')
     .post(check_controller.advanced_search_bank_check)
 
