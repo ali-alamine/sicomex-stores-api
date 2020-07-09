@@ -58,7 +58,7 @@ Invoice.addNewInvoice = function (invoice_data,result){
 }
 
 Invoice.getInvoices = function(result){
-    sql.query('SELECT inv.*,sup.*,st.* FROM invoice as inv left join supplier as sup on inv.supplier_id = sup.supplier_id left join store as st on inv.store_id = st.store_id ORDER BY inv.invoice_order DESC , inv.invoice_id DESC limit 50',function(err,res){
+    sql.query('SELECT inv.*,sup.*,st.*, ck.check_number FROM invoice as inv left join supplier as sup on inv.supplier_id = sup.supplier_id left join store as st on inv.store_id = st.store_id left join bank_check as ck on inv.check_id = ck.bank_check_id ORDER BY inv.invoice_order DESC , inv.invoice_id DESC limit 50',function(err,res){
         if(err){
             result(err);
         }else{

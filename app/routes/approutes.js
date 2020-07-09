@@ -26,6 +26,8 @@ module.exports = function(app){
     .post(supplier_controller.delete_supplier)
     app.route('/update_supplier')
     .post(supplier_controller.update_supplier)
+    app.route('/get_supplier_account')
+    .post(supplier_controller.get_supplier_account)
 
     app.route('/search_supplier_by_name')
     .post(supplier_controller.search_supplier_by_name)

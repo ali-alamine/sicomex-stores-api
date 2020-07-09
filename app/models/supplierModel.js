@@ -69,8 +69,6 @@ Supplier.updateSupplier = function (supplier_data,result){
 Supplier.updateAmount = function (supplier_data,result){
    
     var sqlQuery = "UPDATE supplier SET supplier_amount = "+ supplier_data.new_supplier_amount  +  " WHERE supplier_id = " + supplier_data.supplier_id;
-    console.log(' *************************** sqlQuery ***************************')
-    console.log(sqlQuery)
     sql.query( sqlQuery,function(err,res){
         if(err){
             sql.rollback(function() {
@@ -129,6 +127,38 @@ Supplier.advancedSearchSuppliers = function (request,result){
             result(null,res);
         }
     });
+}
+Supplier.getSupplierAccount = function (supplier_id,result){
+
+    sql.beginTransaction(function(err){
+
+        sql.query('SELECT * FROM invoice WHERE supplier_id= ' + supplier_id + ' AND check_id IS NOT null ORDER BY invoice_date DESC LIMIT 50',function(err,res1){
+            if(err){
+                sql.rollback(function() {
+                    throw err;
+                });
+            }else{
+                sql.query('SELECT * FROM bank_check WHERE supplier_id= ' + supplier_id + ' ORDER BY check_date DESC LIMIT 50',function(err,res2){
+                    if(err){
+                        sql.rollback(function() {
+                            throw err;
+                        });
+                    }else{
+                        var res3=[res1,res2];
+                        sql.commit(function(err) {
+                            if (err) { 
+                                sql.rollback(function() {
+                                    throw err;
+                                });
+                            }
+                            console.log(res3)
+                            result(null,res3);
+                        });
+                    }
+                });
+            }
+        });
+    })
 }
 
 module.exports = Supplier;

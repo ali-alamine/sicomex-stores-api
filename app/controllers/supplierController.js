@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var Supplier = require('../models/supplierModel.js');
 
@@ -76,6 +76,17 @@ exports.advanced_search_suppliers = function(req,res){
             res.send(err);
         }else{
             res.send(supplier)
+        }
+    });
+}
+exports.get_supplier_account = function(req,res){
+    var request=req.body;
+    var supplier_id=request.supplier_id;
+    Supplier.getSupplierAccount(supplier_id,function(err,supplierObj){
+        if(err){
+            res.send(err);
+        }else{
+            res.send(supplierObj)
         }
     });
 }

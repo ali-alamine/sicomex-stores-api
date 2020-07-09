@@ -408,7 +408,6 @@ Check.deleteCheck = function (request,result){
         })
     }
 }
-
 Check.searchCheck =  function(data,result){
 
     if(data.check_number != ''){
