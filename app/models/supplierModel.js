@@ -145,13 +145,33 @@ Supplier.getSupplierAccount = function (supplier_id,result){
                         });
                     }else{
                         var res3=[res1,res2];
+                        
+                        // var res_arr=[];
+                        // for(var i=0;i<res1.length;i++){
+                        //     var obj={'is_check':'','invoice_id':'','check_id':'','number':'','amount':'','date':''};
+                        //     obj.invoice_id=res1[i].invoice_id;
+                        //     obj.check_id=res1[i].check_id;
+                        //     obj.is_check=false;
+                        //     obj.number=res1[i].invoice_number;
+                        //     obj.amount=res1[i].invoice_amount;
+                        //     res_arr.push(obj);
+                     
+                        // }
+                        // for(var i=0;i<res2.length;i++){
+                        //     var obj={'is_check':'','invoice_id':'','check_id':'','number':'','amount':'','date':''};
+                        //     obj.invoice_id=res2[i].invoice_ids;
+                        //     obj.check_id=res2[i].check_id;
+                        //     obj.is_check=true;
+                        //     obj.number=res2[i].check_number;
+                        //     obj.amount=res2[i].check_amount;
+                        //     res_arr.push(obj);
+                        // }
                         sql.commit(function(err) {
                             if (err) { 
                                 sql.rollback(function() {
                                     throw err;
                                 });
                             }
-                            console.log(res3)
                             result(null,res3);
                         });
                     }

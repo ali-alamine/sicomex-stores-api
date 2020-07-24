@@ -426,4 +426,20 @@ Check.searchCheck =  function(data,result){
         result(null,[]);
     }
 }
+Check.getAssignedInvoices =  function(data,result){
+
+  console.log('data')
+  console.log(data)
+        var sqlQuery = 'SELECT * FROM invoice WHERE check_id = ' +data.bank_check_id;
+        console.log(sqlQuery);
+        sql.query(sqlQuery,function(err,res){
+            if(err){
+                sql.rollback(function() {
+                    throw err;
+                });
+            }else{
+                result(null,res);
+            }
+        });
+}
 module.exports = Check;

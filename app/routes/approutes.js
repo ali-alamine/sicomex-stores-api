@@ -10,9 +10,10 @@ module.exports = function(app){
     app.route('/store')
     .post(store_controller.add_new_store)
     .get(store_controller.get_all_stores)
-
     app.route('/search_store_by_name')
     .post(store_controller.search_store_by_name)
+    app.route('/get_bank_account')
+    .post(store_controller.get_store_bank_acc)
 
     app.route('/supplier')
     .post(supplier_controller.add_new_supplier)
@@ -63,6 +64,8 @@ module.exports = function(app){
 
     app.route('/add_new_check')
     .post(check_controller.add_new_check)
+    app.route('/get_assigned_invoices')
+    .post(check_controller.get_assigned_invoices)
     app.route('/get_checks')
     .get(check_controller.get_checks)
     app.route('/pin_check')

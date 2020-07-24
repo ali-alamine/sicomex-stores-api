@@ -105,3 +105,14 @@ exports.search_check = function(req,res){
         }
     });
 }
+exports.get_assigned_invoices = function(req,res){
+    console.log('req.body')
+    console.log(req.body)
+    Check.getAssignedInvoices(req.body,function(err,invoice_report){
+        if(err){
+            res.send(err);
+        }else{
+            res.send(invoice_report)
+        }
+    });
+}

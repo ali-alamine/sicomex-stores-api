@@ -38,7 +38,7 @@ exports.search_store_by_name = function(req,res){
 }
 exports.get_store_bank_acc = function (req,res){
 
-    Store.getStoreBankAcc(req,function(err,store){
+    Store.getStoreBankAcc(req.body,function(err,store){
         if(err){
             res.send(err);
         }else{

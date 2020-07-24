@@ -72,11 +72,9 @@ Invoice.updateInvoice = function(invoice_data,result){
         var sqlQuery='UPDATE invoice SET invoice_number = ' +"'"+ invoice_data.edit_invoice_number  +"'" + ',store_id = ' +"'"+ invoice_data.store_id  +"'"+',supplier_id = ' +"'"+ invoice_data.supplier_id  +"'"+ ',invoice_date = ' +"'"+ invoice_data.edit_invoice_date  +"'" + ',invoice_amount= ' +"'"+ invoice_data.edit_invoice_amount +"'"+" WHERE invoice_id = " +"'"+ invoice_data.invoice_id +"'";
         sql.query(sqlQuery,function(err,res){
             if(err){
-                if(err){
-                    sql.rollback(function() {
-                        throw err;
-                    });
-                }
+                sql.rollback(function() {
+                    throw err;
+                });
             }else{
                 if(!invoice_data.is_same_amount){
                     var update_supplier_amount ={'new_supplier_amount':invoice_data.new_supplier_amount,'supplier_id':invoice_data.supplier_id}
