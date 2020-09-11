@@ -70,9 +70,10 @@ function dynamicQueryForStoreBankAcc(data,table_name,date_field_name){
         sqlCondition = sqlCondition + ' AND is_paid = 1';
     }
     sqlQuery = sqlQuery + sqlCondition + ' ORDER BY ' + date_field_name + ' DESC';
-    console.log('FORM THE DYNAMIC METHOD');
-    console.log(sqlQuery)
     return sqlQuery;
+}
+function custom_sort(a, b) {
+    return new Date(a.lastUpdated).getTime() - new Date(b.lastUpdated).getTime();
 }
 
 Store.getStoreBankAcc = function(data,result){
@@ -96,7 +97,17 @@ Store.getStoreBankAcc = function(data,result){
                                     throw err;
                                 });
                             }else{
-                                var responseData=[check_res,bank_deposit_res];
+                                // var responseData=[check_res,bank_deposit_res];
+                                var responseData=[];
+                                check_res.forEach(check => {
+                                    responseData.push(check)
+                                });
+                                bank_deposit_res.forEach(deposit => {
+                                    responseData.push(deposit)
+                                });
+                                responseData=responseData.sort(custom_sort);
+                                console.log('*************/*/*/*/*/*/*/*/*/*/*/*/**//*/ responseData')
+                                console.log(responseData)
                                 result(null,responseData);
                             }
                         });

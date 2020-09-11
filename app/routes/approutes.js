@@ -6,6 +6,7 @@ module.exports = function(app){
     var invoice_controller = require('../controllers/invoiceController');
     var store_entry_controller = require('../controllers/storeEntryController');
     var check_controller = require('../controllers/checkController');
+    var user_controller = require('../controllers/userController');
 
     app.route('/store')
     .post(store_controller.add_new_store)
@@ -85,4 +86,11 @@ module.exports = function(app){
     app.route('/advanced_search_bank_check')
     .post(check_controller.advanced_search_bank_check)
 
+
+    app.route('/add_new_user')
+    .post(user_controller.add_new_user)
+    app.route('/check_login')
+    .post(user_controller.check_login)
+    app.route('/get_all_users')
+    .get(user_controller.get_all_users)
 }
