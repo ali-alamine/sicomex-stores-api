@@ -73,7 +73,7 @@ function dynamicQueryForStoreBankAcc(data,table_name,date_field_name){
     return sqlQuery;
 }
 function custom_sort(a, b) {
-    return new Date(a.lastUpdated).getTime() - new Date(b.lastUpdated).getTime();
+    return new Date(a.date).getTime() - new Date(b.date).getTime();
 }
 
 Store.getStoreBankAcc = function(data,result){
@@ -98,17 +98,19 @@ Store.getStoreBankAcc = function(data,result){
                                 });
                             }else{
                                 // var responseData=[check_res,bank_deposit_res];
-                                var responseData=[];
+                                var temp_data=[];
+                                var combinedRes=[];
+
                                 check_res.forEach(check => {
-                                    responseData.push(check)
+                                    temp_data.push(check);
+                                    combinedRes.push({'type':'check','check_number':check.check_number,'sign':'-','amount':check.check_amount,'date':check.check_date})
                                 });
                                 bank_deposit_res.forEach(deposit => {
-                                    responseData.push(deposit)
+                                    temp_data.push(deposit)
+                                    combinedRes.push({'type':'deposit','sign':'+','amount':deposit.bank_deposit,'date':deposit.entry_report_date})
                                 });
-                                responseData=responseData.sort(custom_sort);
-                                console.log('*************/*/*/*/*/*/*/*/*/*/*/*/**//*/ responseData')
-                                console.log(responseData)
-                                result(null,responseData);
+                                combinedRes.sort(custom_sort);
+                                result(null,combinedRes);
                             }
                         });
                     }
