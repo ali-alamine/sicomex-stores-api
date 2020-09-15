@@ -8,6 +8,8 @@ var Store =function(store){
 }
 
 Store.addNewStore = function (store_details,result){
+    console.log(' **** store_details')
+    console.log(store_details)
     sql.query('INSERT INTO store SET ?',store_details, function(err,res){
         if(err){
             result(err,null);
