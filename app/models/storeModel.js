@@ -8,7 +8,6 @@ var Store =function(store){
 }
 
 Store.addNewStore = function (store_details,result){
-    console.log(store_details)
     sql.query('INSERT INTO store SET ?',store_details, function(err,res){
         if(err){
             result(err,null);
@@ -28,7 +27,7 @@ Store.getAllStores = function(result){
 }
 Store.updateAmount = function (store_data,result){
     var sqlQuery = "UPDATE store SET amount = "+ store_data.new_store_amount  +  " WHERE store_id = " + store_data.store_id;
-    console.log(sqlQuery)
+    
     sql.query( sqlQuery,function(err,res){
         if(err){
             sql.rollback(function() {
@@ -122,7 +121,7 @@ Store.getStoreBankAcc = function(data,result){
 }
 
 Store.getStoreExpenses = function(req,result){
-    console.log(req)
+    
     sql.beginTransaction(function(err){
 
         var sqlQuery='SELECT store_entry_id, cash_expense_amount AS total_expense, entry_report_date FROM store_entry WHERE store_id = ' + req.store_id;
@@ -142,8 +141,6 @@ Store.getStoreExpenses = function(req,result){
                     throw err;
                 });
             }else{
-                console.log('******************************* res1')
-                console.log(res1)
                 var sqlQuery2='SELECT * FROM `cash_detail` WHERE store_id= ' +req.store_id;
                 sql.query(sqlQuery2,function(err,res2){
                     if(err){
