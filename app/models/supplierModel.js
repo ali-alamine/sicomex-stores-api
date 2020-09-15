@@ -3,8 +3,8 @@
 var sql = require('./db.js');
 
 var Supplier =function(supplier){
-    this.supplier_name=store.supplier_name;
-    this.supplier_amount=store.supplier_amount;
+    this.supplier_name=supplier.supplier_name;
+    this.supplier_amount=supplier.supplier_amount;
 }
 
 Supplier.addNewSupplier = function (new_supplier,result){

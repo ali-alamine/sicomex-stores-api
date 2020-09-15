@@ -56,7 +56,6 @@ Invoice.addNewInvoice = function (invoice_data,result){
 
     });
 }
-
 Invoice.getInvoices = function(result){
     sql.query('SELECT inv.*,sup.*,st.*, ck.check_number FROM invoice as inv left join supplier as sup on inv.supplier_id = sup.supplier_id left join store as st on inv.store_id = st.store_id left join bank_check as ck on inv.check_id = ck.bank_check_id ORDER BY inv.invoice_order DESC , inv.invoice_id DESC limit 50',function(err,res){
         if(err){
@@ -178,7 +177,20 @@ Invoice.getInvoiceByNumber = function(invoice_data,result){
     });
 }
 Invoice.updateInvoiceCheckID =  function(data,result){
-    var sqlQuery = 'UPDATE invoice set check_id =' + data.check_id + ' where invoice_id in (' + data.invoice_ids + ')';
+    var sqlQuery = 'UPDATE invoice SET check_id =' + data.check_id + ' WHERE invoice_id IN (' + data.invoice_ids + ')';
+    console.log(sqlQuery);
+    sql.query(sqlQuery,function(err,res){
+        if(err){
+            sql.rollback(function() {
+                throw err;
+            });
+        }else{
+            result(null,res);
+        }
+    });
+}
+Invoice.toggleInvoicePayment =  function(is_paid,invoice_ids,result){
+    var sqlQuery = 'UPDATE invoice SET is_paid = ' + is_paid + ' WHERE invoice_id IN (' + invoice_ids + ')';
     console.log(sqlQuery);
     sql.query(sqlQuery,function(err,res){
         if(err){

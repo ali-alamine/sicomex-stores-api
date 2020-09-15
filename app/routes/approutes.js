@@ -15,6 +15,8 @@ module.exports = function(app){
     .post(store_controller.search_store_by_name)
     app.route('/get_bank_account')
     .post(store_controller.get_store_bank_acc)
+    app.route('/get_store_expenses')
+    .post(store_controller.get_store_expenses)
 
     app.route('/supplier')
     .post(supplier_controller.add_new_supplier)
@@ -93,4 +95,6 @@ module.exports = function(app){
     .post(user_controller.check_login)
     app.route('/get_all_users')
     .get(user_controller.get_all_users)
+
+    
 }

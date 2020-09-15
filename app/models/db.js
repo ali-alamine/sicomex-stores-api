@@ -15,7 +15,7 @@ if(is_prod){
   var connection = mysql.createConnection({
       host     : 'localhost',
       user     : 'root',
-      password : '',
+      password : '91j3funfidiuayfihun243unf78J@',
       database : 'sicomex-stores-new'
   });
 }

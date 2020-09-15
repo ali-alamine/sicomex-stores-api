@@ -35,7 +35,7 @@ exports.search_store_by_name = function(req,res){
             res.send(store)
         }
     });
-}
+};
 exports.get_store_bank_acc = function (req,res){
 
     Store.getStoreBankAcc(req.body,function(err,store){
@@ -45,5 +45,17 @@ exports.get_store_bank_acc = function (req,res){
             res.send(store);
         }
     });
+};
+
+exports.get_store_expenses = function (req,res){
+
+    Store.getStoreExpenses(req.body,function(err,store){
+        if(err){
+            res.send(err);
+        }else{
+            res.send(store);
+        }
+    });
+
 }
 

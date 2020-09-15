@@ -121,4 +121,51 @@ Store.getStoreBankAcc = function(data,result){
     
 }
 
+Store.getStoreExpenses = function(req,result){
+    console.log(req)
+    sql.beginTransaction(function(err){
+
+        var sqlQuery='SELECT store_entry_id, cash_expense_amount AS total_expense, entry_report_date FROM store_entry WHERE store_id = ' + req.store_id;
+        var sqlDate_from=' AND date(entry_report_date) >= ' +"'" + req.date_from + "'";
+        var sqlDate_to=' AND date(entry_report_date) <= ' + "'" + req.date_to + "'";
+        if(req.date_from != 'Invalid date'){
+
+            sqlQuery=sqlQuery +sqlDate_from; 
+        }
+        if(req.date_to != 'Invalid date'){
+
+            sqlQuery=sqlQuery +sqlDate_to; 
+        }
+        sql.query(sqlQuery,function(err,res1){
+            if(err){
+                sql.rollback(function() {
+                    throw err;
+                });
+            }else{
+                console.log('******************************* res1')
+                console.log(res1)
+                var sqlQuery2='SELECT * FROM `cash_detail` WHERE store_id= ' +req.store_id;
+                sql.query(sqlQuery2,function(err,res2){
+                    if(err){
+                        sql.rollback(function() {
+                            throw err;
+                        });
+                    }else{
+                        sql.commit(function(err) {
+                            if (err) { 
+                                sql.rollback(function() {
+                                    throw err;
+                                });
+                            }else{
+                                let combinedRes=[res1,res2];
+                                result(null,combinedRes);
+                            }
+                        });
+                    }
+                })
+            }
+        });
+    })
+}
+
 module.exports = Store;

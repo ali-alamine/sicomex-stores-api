@@ -16,8 +16,6 @@ var Check =function(check){
     this.check_date=check.check_date;
 }
 Check.addNewCheck = function (check_data,result){
-    console.log(' ----------------------------------- request -----------------------------------')
-    console.log(check_data)
     sql.beginTransaction(function(err){
         sql.query('SELECT * FROM bank_check WHERE check_number = ' +check_data.check_number,function(err,res){
             if(err){
@@ -64,14 +62,22 @@ Check.addNewCheck = function (check_data,result){
                                                                 throw err;
                                                             })
                                                         }else{
-                                                            sql.commit(function(err) {
-                                                                if (err) { 
-                                                                    sql.rollback(function() {
+                                                            invoiceModel.toggleInvoicePayment(1,check_data.invoice_ids,function(err,res){
+                                                                if(err){
+                                                                    sql.rollback(function(){
                                                                         throw err;
+                                                                    })
+                                                                }else{
+                                                                    sql.commit(function(err) {
+                                                                        if (err) { 
+                                                                            sql.rollback(function() {
+                                                                                throw err;
+                                                                            });
+                                                                        }
+                                                                        result(null,res);
                                                                     });
                                                                 }
-                                                                result(null,res);
-                                                            });
+                                                            })
                                                         }
                                                     })
 
@@ -184,7 +190,8 @@ Check.unPinCheck = function (check_data,result){
     });
 }
 Check.setCheckPaid = function (request,result){
-    
+    console.log(' SET CHECK TO PAID')
+    console.log(request.invoice_ids)
     sql.beginTransaction(function(err){
 
         sql.query('UPDATE bank_check SET is_paid = 1 WHERE bank_check_id= '+ request.bank_check_id,function(err,res){
@@ -210,14 +217,22 @@ Check.setCheckPaid = function (request,result){
                                         throw err;
                                     })
                                 }else{
-                                    sql.commit(function(err) {
-                                        if (err) { 
-                                            sql.rollback(function() {
+                                    invoiceModel.toggleInvoicePayment(1,request.invoice_ids,function(err,res){
+                                        if(err){
+                                            sql.rollback(function(){
                                                 throw err;
+                                            })
+                                        }else{
+                                            sql.commit(function(err) {
+                                                if (err) { 
+                                                    sql.rollback(function() {
+                                                        throw err;
+                                                    });
+                                                }
+                                                result(null,res);
                                             });
                                         }
-                                        result(null,res);
-                                    });
+                                    })
                                 }
                             })
 
@@ -274,14 +289,22 @@ Check.setCheckUnPaid = function (request,result){
                                         throw err;
                                     })
                                 }else{
-                                    sql.commit(function(err) {
-                                        if (err) { 
-                                            sql.rollback(function() {
+                                    invoiceModel.toggleInvoicePayment(0,request.invoice_ids,function(err,res){
+                                        if(err){
+                                            sql.rollback(function(){
                                                 throw err;
+                                            })
+                                        }else{
+                                            sql.commit(function(err) {
+                                                if (err) { 
+                                                    sql.rollback(function() {
+                                                        throw err;
+                                                    });
+                                                }
+                                                result(null,res);
                                             });
                                         }
-                                        result(null,res);
-                                    });
+                                    })
                                 }
                             })
 
@@ -428,18 +451,16 @@ Check.searchCheck =  function(data,result){
 }
 Check.getAssignedInvoices =  function(data,result){
 
-  console.log('data')
-  console.log(data)
-        var sqlQuery = 'SELECT * FROM invoice WHERE check_id = ' +data.bank_check_id;
-        console.log(sqlQuery);
-        sql.query(sqlQuery,function(err,res){
-            if(err){
-                sql.rollback(function() {
-                    throw err;
-                });
-            }else{
-                result(null,res);
-            }
-        });
+    var sqlQuery = 'SELECT * FROM invoice WHERE check_id = ' +data.bank_check_id;
+    console.log(sqlQuery);
+    sql.query(sqlQuery,function(err,res){
+        if(err){
+            sql.rollback(function() {
+                throw err;
+            });
+        }else{
+            result(null,res);
+        }
+    });
 }
 module.exports = Check;
