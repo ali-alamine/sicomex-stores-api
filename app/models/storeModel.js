@@ -14,8 +14,11 @@ Store.addNewStore = function (store_details,result){
     console.log(sqlQuery);
     sql.query(sqlQuery, function(err,res){
         if(err){
+            console.log('ERROR')
+            console.log(err)
             result(err,null);
         }else{
+            console.log('success')
             result(null,res.inserted);
         }
     })
