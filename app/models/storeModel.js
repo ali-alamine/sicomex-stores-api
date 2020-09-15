@@ -10,7 +10,9 @@ var Store =function(store){
 Store.addNewStore = function (store_details,result){
     console.log(' **** store_details')
     console.log(store_details)
-    sql.query('INSERT INTO store SET ?',store_details, function(err,res){
+    var sqlQuery='INSERT INTO store SET store_name= ' + store_details.store_name + ', amount= '+ store_details.amount;
+    console.log(sqlQuery);
+    sql.query(sqlQuery, function(err,res){
         if(err){
             result(err,null);
         }else{
