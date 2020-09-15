@@ -1,6 +1,7 @@
 'user strict';
 
 var mysql = require('mysql');
+
 //local mysql db connection
 var is_prod = false;
 if(is_prod){
@@ -14,7 +15,7 @@ if(is_prod){
   var connection = mysql.createConnection({
       host     : 'localhost',
       user     : 'root',
-      password : '', //91j3funfidiuayfihun243unf78J@
+      password : '91j3funfidiuayfihun243unf78J@',
       database : 'sicomex-stores-new'
   });
 }
