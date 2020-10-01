@@ -221,6 +221,8 @@ Invoice.searchInvoice =  function(data,result){
     }
 }
 Invoice.advancedSearchInvoice = function(data,result){
+    console.log(' ******************************** data')
+    console.log(data)
     var order_by_date=data.order_by_date;
     var order_by_amount=data.order_by_amount;
     var amount_from=data.amount_from;

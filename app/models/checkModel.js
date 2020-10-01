@@ -340,12 +340,18 @@ Check.advancedSearchBankCheck = function(data,result){
     var order_by_amount=data.order_by_amount;
     var amount_from=data.amount_from;
     var amount_to=data.amount_to;
+    var supplier_id=data.supplier_id;
+    var store_id=data.store_id;
     var sqlQuery='';
+    var sqlQuery_sum='';
     var sql_and='';
     var sql_order='';
-    console.log(data)
-    sqlQuery = 'SELECT ck.*, sup.*, st.* from bank_check as ck LEFT join supplier as sup on ck.supplier_id = sup.supplier_id LEFT JOIN store as st on ck.store_id = st.store_id WHERE 1';
-    
+    var is_empty_search_criteria='1';
+    if(amount_from=='' && amount_to =='' && data.date_from=='Invalid date' && data.date_to=='Invalid date' && data.is_paid=='Any' && data.order_by_date==false && data.order_by_amount==false && data.supplier_ids.length==0 && data.store_ids.length == 0){
+        is_empty_search_criteria='0';
+    }
+    sqlQuery = 'SELECT ck.*, sup.*, st.* from bank_check as ck LEFT join supplier as sup on ck.supplier_id = sup.supplier_id LEFT JOIN store as st on ck.store_id = st.store_id WHERE '+is_empty_search_criteria;
+    sqlQuery_sum = 'SELECT sum(check_amount) as total_sum from bank_check as ck LEFT join supplier as sup on ck.supplier_id = sup.supplier_id LEFT JOIN store as st on ck.store_id = st.store_id WHERE '+is_empty_search_criteria;
     if(data.supplier_ids.length > 0 ){
         sql_and = sql_and +' AND ck.supplier_id in (' + data.supplier_ids + ')';
     }
@@ -384,15 +390,25 @@ Check.advancedSearchBankCheck = function(data,result){
         sql_order =sql_order + ' ORDER BY ck.check_order DESC , ck.bank_check_id DESC'
     }
     sqlQuery= sqlQuery +sql_and + sql_order;
-    console.log(sqlQuery);
+    sqlQuery_sum= sqlQuery_sum +sql_and;
+    // console.log(sqlQuery);
     sql.query(sqlQuery,function(err,res){
         if(err){
             result(err);
         }else{
-            if(res.length==0){
-                res='EMPTY_RESULT';
-            }
-            result(res);
+            sql.query(sqlQuery_sum,function(err,res2){
+                if(err){
+                    result(err)
+                }else{
+                    if(res.length==0){
+                        res='EMPTY_RESULT';
+                    }
+                    console.log(res2)
+                    let res_data=['FROM_ADVANCED_SEARCH',res,res2];
+                    result(res_data);
+                }
+            })
+
         }
     });
 }

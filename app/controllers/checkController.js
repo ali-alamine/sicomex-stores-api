@@ -76,8 +76,6 @@ exports.update_check = function(req,res){
   })  
 }
 exports.advanced_search_bank_check=function(req,res){
-    console.log(' -------------- REQUEST -----------------')
-    console.log(req.body)
     Check.advancedSearchBankCheck(req.body,function(err,Check_report){
         if(err){
             res.send(err)

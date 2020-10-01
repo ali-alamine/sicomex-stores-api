@@ -14,7 +14,6 @@ exports.add_new_user = function(req,res){
     });
 }
 exports.check_login = function(req,res){
-
     User.checkLogin(req.body,function(err,user){
         if(err){
             res.send(err);

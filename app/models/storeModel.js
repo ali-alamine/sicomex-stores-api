@@ -124,9 +124,11 @@ Store.getStoreExpenses = function(req,result){
     
     sql.beginTransaction(function(err){
 
-        var sqlQuery='SELECT store_entry_id, cash_expense_amount AS total_expense, entry_report_date FROM store_entry WHERE store_id = ' + req.store_id;
+        var sqlQuery='SELECT store_entry_id, cash_expense_amount AS total_expense, entry_report_date FROM store_entry WHERE cash_expense_amount !=0 AND store_id = ' + req.store_id;
         var sqlDate_from=' AND date(entry_report_date) >= ' +"'" + req.date_from + "'";
         var sqlDate_to=' AND date(entry_report_date) <= ' + "'" + req.date_to + "'";
+
+        var sqlQueryTotalAmount='SELECT sum(cash_expense_amount) as total_store_expense FROM store_entry WHERE store_id = ' + req.store_id;
         if(req.date_from != 'Invalid date'){
 
             sqlQuery=sqlQuery +sqlDate_from; 
@@ -138,14 +140,14 @@ Store.getStoreExpenses = function(req,result){
         sql.query(sqlQuery,function(err,res1){
             if(err){
                 sql.rollback(function() {
-                    throw err;
+                    throw err; 
                 });
             }else{
-                var sqlQuery2='SELECT * FROM `cash_detail` WHERE store_id= ' +req.store_id;
-                sql.query(sqlQuery2,function(err,res2){
+
+                sql.query(sqlQueryTotalAmount,function(err,res2){
                     if(err){
                         sql.rollback(function() {
-                            throw err;
+                            throw err; 
                         });
                     }else{
                         sql.commit(function(err) {
@@ -155,6 +157,7 @@ Store.getStoreExpenses = function(req,result){
                                 });
                             }else{
                                 let combinedRes=[res1,res2];
+                                console.log(combinedRes)
                                 result(null,combinedRes);
                             }
                         });
