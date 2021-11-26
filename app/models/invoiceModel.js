@@ -160,12 +160,22 @@ Invoice.unPinInvoice = function (invoice_data,result){
     });
 }
 Invoice.getInvoiceByNumber = function(invoice_data,result){
-    var invoice_number=invoice_data.invoice_number;
-    var sqlQuery = '';
+    let invoice_number=invoice_data.invoice_number;
+    let supplier_id = invoice_data?.supplier_id;
+    let sqlQuery = '';
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> invoice_data')
+    console.log(invoice_data)
     if(invoice_number == ''){
         sqlQuery = 'SELECT invoice_id,invoice_number,invoice_amount from invoice where invoice_number like "% %"';
     }else{
-        sqlQuery = 'SELECT invoice_id,invoice_number,invoice_amount from invoice where invoice_number like "%' +invoice_number+ '%" and check_id IS NULL LIMIT 10';
+        let supplier_id_condition = "";
+        if(supplier_id != null){
+
+            supplier_id_condition="supplier_id = " + supplier_id + " AND ";
+        }else{
+            supplier_id_condition="";
+        }
+        sqlQuery = 'SELECT invoice_id,invoice_number,invoice_amount from invoice where ' + supplier_id_condition + 'invoice_number like "%' +invoice_number+ '%" and check_id IS NULL LIMIT 10';
     }
     console.log(sqlQuery)
     sql.query(sqlQuery,function(err,res){
