@@ -1,25 +1,12 @@
 const cors = require('cors');
 const http = require('http');
 const fs = require('fs');
-const corsOpts = {
-  origin: '*',
-
-  methods: [
-    'GET',
-    'POST',
-  ],
-
-  allowedHeaders: [
-    'Content-Type',
-  ],
-};
-
 const express = require('express'),
   app = express(),
 
 bodyParser = require('body-parser');
 port = process.env.PORT || 4000;
-app.use(cors(corsOpts));
+app.use(cors())
 
 console.log('API server started on: ' + port);
 
