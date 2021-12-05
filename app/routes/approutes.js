@@ -44,6 +44,8 @@ module.exports = function(app){
     .get(invoice_controller.get_invoices)
     app.route('/update_invoice')
     .post(invoice_controller.update_invoice)
+    app.route('/pay_invoice')
+    .post(invoice_controller.pay_invoice)
     app.route('/delete_invoice')
     .post(invoice_controller.delete_invoice)
     app.route('/pin_invoice')

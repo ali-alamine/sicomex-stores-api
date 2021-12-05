@@ -10,7 +10,7 @@ exports.add_new_store_entry = function(req,res){
     var new_store_entry = new StoreEntry(request);
     new_store_entry.starting_amount=new_store_entry.remain_amount;
 
-    var new_store_amount=(parseInt(request.store_amount) + parseInt(request.bank_deposit));
+    let new_store_amount=(parseInt(request.store_amount) + parseInt(request.bank_deposit));
 
     StoreEntry.addNewStoreEntry(supply_details,expense_details,new_store_entry,new_store_amount,function(err,storeEntry){
         if(err){

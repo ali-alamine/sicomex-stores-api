@@ -16,8 +16,6 @@ var StoreEntry =function(storeEntry){
 }
 
 StoreEntry.addNewStoreEntry = function (supply_details,expense_details,entry_details,new_store_amount,result){
-    console.log('---------------------- new_store_amount ---------------------- ')
-    console.log(new_store_amount)
     sql.beginTransaction(function(err){
         if (err) { throw err; }
         sql.query('INSERT INTO store_entry SET ?',entry_details, function(err,res){

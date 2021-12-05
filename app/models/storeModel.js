@@ -62,7 +62,7 @@ function dynamicQueryForStoreBankAcc(data, table_name, date_field_name) {
 
     if (table_name == 'bank_check') {
 
-        sqlQuery = 'SELECT * FROM bank_check INNER JOIN supplier on bank_check.supplier_id = supplier.supplier_id WHERE bank_check.store_id= ' + data.store_id;
+        sqlQuery = 'SELECT * FROM bank_check left JOIN supplier on bank_check.supplier_id = supplier.supplier_id WHERE bank_check.store_id= ' + data.store_id;
         if (data.date_from != 'Invalid date') {
             sqlCondition = sqlCondition + ' AND date(bank_check.check_date) >= ' + "'" + data.date_from + "'" + ' ';
         }
@@ -88,7 +88,7 @@ function dynamicQueryForStoreBankAcc(data, table_name, date_field_name) {
         sqlQuery = sqlQuery + sqlCondition + ' ORDER BY ' + date_field_name + ' DESC limit 300';
     }
 
-
+console.log(sqlQuery)
     return sqlQuery;
 }
 function custom_sort(a, b) {
