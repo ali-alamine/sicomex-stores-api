@@ -5,8 +5,8 @@ var mysql = require('mysql');
 
 var connection = mysql.createConnection({
       host     : 'localhost',// 'database-2.chrjj6sace1q.af-south-1.rds.amazonaws.com',
-      user     : 'petitem',
-      password : 'U<U[{Bc+C!3sdRn2{{2t}?#m',
+      user     : 'root',
+      password : '',//'sicomex-stores',//'91j3funfidiuayfihun243unf78J@',
       database : 'sicomex-stores-new'//'sicomex_stores_new'
 });
 
